@@ -8,6 +8,14 @@ interface ErrorMessageProps {
   onRetry?: () => void;
 }
 
+/**
+ * Renders a styled error alert with an icon, the provided message, and an optional retry button.
+ *
+ * @param message - Text to display inside the alert
+ * @param className - Additional CSS classes appended to the root container
+ * @param onRetry - If provided, a "Tentar novamente" button is shown and this callback is invoked when the button is clicked
+ * @returns A JSX element containing the error alert UI
+ */
 export function ErrorMessage({
   message,
   className,

@@ -25,6 +25,14 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null);
 const USER_STORAGE_KEY = "raxa_user";
 
+/**
+ * Provides authentication context (current user, loading state, and auth actions) to descendant components.
+ *
+ * Initializes user state from a persisted token and localStorage, and exposes `signIn`, `signOut`, and `updateUser` through context.
+ *
+ * @param children - React nodes rendered inside the provider
+ * @returns The AuthContext provider element wrapping `children`
+ */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,6 +81,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/**
+ * Retrieve the current authentication context for the calling component.
+ *
+ * @returns The `AuthState` object containing `user`, `isLoading`, `signIn`, `signOut`, and `updateUser`.
+ * @throws Error if called outside of an `AuthProvider`
+ */
 export function useAuth() {
   const context = useContext(AuthContext);
 
