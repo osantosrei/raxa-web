@@ -21,6 +21,11 @@ export function useMatchDetail(id: string) {
   });
 }
 
+/**
+ * Provides a React Query mutation hook to create a match and refresh the matches list on success.
+ *
+ * @returns The mutation object for creating a match. On success, invalidates the matches list query so it will be refetched.
+ */
 export function useCreateMatch() {
   const queryClient = useQueryClient();
 
@@ -32,6 +37,14 @@ export function useCreateMatch() {
   });
 }
 
+/**
+ * Provide a React Query mutation hook that cancels a match and invalidates related cached queries.
+ *
+ * The mutation calls `matchesApi.cancel`; when it succeeds it invalidates both the specific match detail
+ * query for the cancelled match ID and the overall matches list query so they will be refetched.
+ *
+ * @returns The React Query mutation object for cancelling a match (includes `mutate`, `mutateAsync`, status, etc.).
+ */
 export function useCancelMatch() {
   const queryClient = useQueryClient();
 

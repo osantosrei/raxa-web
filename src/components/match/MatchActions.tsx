@@ -15,12 +15,27 @@ interface MatchActionsProps {
   onActionComplete: () => void;
 }
 
+/**
+ * Extracts a user-facing error message from an unknown error value.
+ *
+ * @param err - The error value to inspect for a `message` property
+ * @returns The `message` property converted to a string if present; otherwise the fallback `"Algo deu errado."`
+ */
 function getApiErrorMessage(err: unknown) {
   return err && typeof err === "object" && "message" in err
     ? String(err.message)
     : "Algo deu errado.";
 }
 
+/**
+ * Render action controls for a match, conditionally showing join, leave, or cancel buttons or a status banner.
+ *
+ * @param match - The match object (must include `id`, `scheduledAt`, and `status`) used to derive available actions and display state
+ * @param isCreator - Whether the current user is the match creator
+ * @param isParticipant - Whether the current user is a participant in the match
+ * @param onActionComplete - Callback invoked after a successful action (join, leave, or cancel)
+ * @returns The rendered JSX for match action controls or a status banner
+ */
 export function MatchActions({
   match,
   isCreator,

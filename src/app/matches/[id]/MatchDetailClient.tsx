@@ -18,6 +18,16 @@ interface MatchDetailClientProps {
   id: string;
 }
 
+/**
+ * Render the match detail page for a given match id.
+ *
+ * Displays match metadata, available actions, an optional invite code for the match creator,
+ * and the confirmed players list. Handles loading and error states for match and player data
+ * and triggers a refetch of both when actions complete.
+ *
+ * @param id - The match identifier to load and display
+ * @returns The rendered match detail view
+ */
 export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const { user } = useAuth();
   const {
