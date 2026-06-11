@@ -4,12 +4,16 @@ import Cookies from "js-cookie";
 import { TOKEN_KEY } from "@/lib/auth";
 import type { ApiError } from "@/types/api";
 
-const PUBLIC_AUTH_PATHS = ["/auth/login", "/auth/register"];
+const PUBLIC_REQUEST_PATTERNS = [
+  /^\/auth\/login$/,
+  /^\/auth\/register$/,
+  /^\/invites\/[^/]+\/resolve$/,
+];
 
-function isPublicAuthEndpoint(url?: string) {
+function isPublicRequest(url?: string) {
   const pathname = url?.split("?")[0];
 
-  return PUBLIC_AUTH_PATHS.some((path) => pathname?.endsWith(path));
+  return PUBLIC_REQUEST_PATTERNS.some((pattern) => pattern.test(pathname ?? ""));
 }
 
 export const apiClient = axios.create({
@@ -21,7 +25,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   const token = Cookies.get(TOKEN_KEY);
 
-  if (token && !isPublicAuthEndpoint(config.url)) {
+  if (token && !isPublicRequest(config.url)) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
@@ -33,9 +37,9 @@ apiClient.interceptors.response.use(
   (error) => {
     const apiError = error.response?.data as ApiError | undefined;
     const requestUrl = error.config?.url as string | undefined;
-    const isPublicAuthRequest = isPublicAuthEndpoint(requestUrl);
+    const isPublicRequestError = isPublicRequest(requestUrl);
 
-    if (error.response?.status === 401 && !isPublicAuthRequest) {
+    if (error.response?.status === 401 && !isPublicRequestError) {
       Cookies.remove(TOKEN_KEY);
 
       if (typeof window !== "undefined") {
