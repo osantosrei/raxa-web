@@ -1,0 +1,42 @@
+import { CalendarDays, MapPin, Users } from "lucide-react";
+import Link from "next/link";
+
+import { StatusBadge } from "@/components/match/StatusBadge";
+import { formatMatchDate } from "@/lib/utils";
+import type { MatchResponse } from "@/types/api";
+
+export function MatchCard({ match }: { match: MatchResponse }) {
+  const spotsLeft = match.maxPlayers - match.currentPlayers;
+
+  return (
+    <Link href={`/matches/${match.id}`}>
+      <article className="rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]">
+        <div className="mb-3 flex items-start justify-between gap-2">
+          <h3 className="font-bold leading-tight text-text">{match.title}</h3>
+          <StatusBadge status={match.status} />
+        </div>
+
+        <div className="flex flex-col gap-1 text-sm text-muted">
+          <span className="flex items-center gap-2">
+            <MapPin size={16} /> {match.location}
+          </span>
+          <span className="flex items-center gap-2">
+            <CalendarDays size={16} /> {formatMatchDate(match.scheduledAt)}
+          </span>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+          <span className="flex items-center gap-2 text-sm font-medium text-text">
+            <Users size={16} />
+            {match.currentPlayers}/{match.maxPlayers} jogadores
+          </span>
+          {spotsLeft > 0 && match.status === "OPEN" && (
+            <span className="text-xs font-medium text-success">
+              {spotsLeft} vaga{spotsLeft > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+      </article>
+    </Link>
+  );
+}
