@@ -12,6 +12,7 @@ import { authApi } from "@/api/auth";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
+import { getApiErrorMessage } from "@/lib/errors";
 import { getSafeRedirectPath } from "@/lib/navigation";
 import { useAuth } from "@/store/authContext";
 import type { LoginRequest } from "@/types/api";
@@ -55,11 +56,7 @@ function LoginContent() {
       signIn(response);
       router.replace(redirect);
     } catch (err) {
-      const message =
-        err && typeof err === "object" && "message" in err
-          ? String(err.message)
-          : "Erro ao fazer login.";
-      setApiError(message);
+      setApiError(getApiErrorMessage(err, "Erro ao fazer login."));
     }
   };
 

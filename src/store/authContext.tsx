@@ -70,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [clearAuthState]);
 
   useEffect(() => {
+    // pageshow runs when history restores a bfcache page, so cross-tab sign-out
+    // or a removed TOKEN_KEY cookie clears in-memory auth before private UI is reused.
     const syncAfterHistoryRestore = () => {
       if (!Cookies.get(TOKEN_KEY)) {
         clearAuthState();

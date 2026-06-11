@@ -22,7 +22,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
     const redirect = `${pathname}${query ? `?${query}` : ""}`;
 
     router.replace(`/login?redirect=${encodeURIComponent(redirect)}`);
-    router.refresh();
   }, [isLoading, isPublic, pathname, router, user]);
 
   if (!isPublic && (isLoading || !user)) {

@@ -13,6 +13,7 @@ import { invitesApi } from "@/api/invites";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
+import { getApiErrorMessage } from "@/lib/errors";
 import {
   getInviteCodeFromRedirect,
   getSafeRedirectPath,
@@ -28,17 +29,12 @@ const registerSchema = z.object({
   phone: optionalPhoneSchema,
 });
 
-function getApiErrorMessage(err: unknown, fallback: string) {
-  return err && typeof err === "object" && "message" in err
-    ? String(err.message)
-    : fallback;
-}
-
 function RegisterContent() {
   const { signIn } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [apiError, setApiError] = useState<string | null>(null);
+  const [inviteWarning, setInviteWarning] = useState<string | null>(null);
 
   const {
     register,
@@ -56,6 +52,7 @@ function RegisterContent() {
 
   const onSubmit = async (data: RegisterRequest) => {
     setApiError(null);
+    setInviteWarning(null);
 
     try {
       const response = await authApi.register({
@@ -67,8 +64,15 @@ function RegisterContent() {
       const inviteCode = getInviteCodeFromRedirect(redirect);
 
       if (inviteCode) {
-        const match = await invitesApi.join(inviteCode);
-        router.replace(`/matches/${match.id}`);
+        try {
+          const match = await invitesApi.join(inviteCode);
+          router.replace(`/matches/${match.id}`);
+        } catch {
+          setInviteWarning(
+            "Conta criada, mas não foi possível entrar pelo convite. Você será redirecionado para as peladas.",
+          );
+          window.setTimeout(() => router.replace("/matches"), 1800);
+        }
         return;
       }
 
@@ -124,6 +128,11 @@ function RegisterContent() {
           />
 
           {apiError && <ErrorMessage message={apiError} />}
+          {inviteWarning && (
+            <div className="rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-warning">
+              {inviteWarning}
+            </div>
+          )}
 
           <Button
             label="Cadastrar"

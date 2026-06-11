@@ -52,7 +52,8 @@ export function Header() {
                 ? pathname === "/matches" ||
                   (pathname.startsWith("/matches/") &&
                     !pathname.startsWith("/matches/new"))
-                : pathname === link.href || pathname.startsWith(link.href);
+                : pathname === link.href ||
+                  pathname.startsWith(`${link.href}/`);
 
             return (
               <Link

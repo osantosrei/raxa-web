@@ -19,7 +19,7 @@ export function MatchCard({ match }: { match: MatchResponse }) {
   const spotsLeft = match.maxPlayers - match.currentPlayers;
 
   return (
-    <Link href={`/matches/${match.id}`}>
+    <Link href={`/matches/${match.id}`} className="block h-full">
       <article className="h-full rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]">
         <div className="mb-3 flex items-start justify-between gap-2">
           <h3 className="min-w-0 break-words font-bold leading-tight text-text">
