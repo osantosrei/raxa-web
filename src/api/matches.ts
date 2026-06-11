@@ -16,4 +16,8 @@ export const matchesApi = {
     const response = await apiClient.post<MatchResponse>("/matches", data);
     return response.data;
   },
+
+  async cancel(id: string): Promise<void> {
+    await apiClient.delete(`/matches/${id}`);
+  },
 };

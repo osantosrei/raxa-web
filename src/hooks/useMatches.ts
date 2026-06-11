@@ -49,3 +49,15 @@ export function useCreateMatch() {
     },
   });
 }
+
+export function useCancelMatch() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: matchesApi.cancel,
+    onSuccess: (_data, matchId) => {
+      queryClient.invalidateQueries({ queryKey: [...MATCHES_KEY, matchId] });
+      queryClient.invalidateQueries({ queryKey: MATCHES_KEY });
+    },
+  });
+}

@@ -1,9 +1,11 @@
 "use client";
 
-import { CalendarDays, ChevronLeft, MapPin, Ticket, Users } from "lucide-react";
+import { CalendarDays, ChevronLeft, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 
 import { InfoRow } from "@/components/match/InfoRow";
+import { InviteShareWidget } from "@/components/match/InviteShareWidget";
+import { MatchActions } from "@/components/match/MatchActions";
 import { PlayerList } from "@/components/match/PlayerList";
 import { StatusBadge } from "@/components/match/StatusBadge";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -58,6 +60,13 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
   }
 
   const isCreator = match.creator.id === user?.id;
+  const isParticipant =
+    players?.some((player) => player.userId === user?.id) ?? false;
+
+  const refetchDetail = () => {
+    refetchMatch();
+    refetchPlayers();
+  };
 
   return (
     <main className="mx-auto max-w-lg px-4 pb-24">
@@ -87,16 +96,15 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
         />
       </section>
 
+      <MatchActions
+        match={match}
+        isCreator={isCreator}
+        isParticipant={isParticipant}
+        onActionComplete={refetchDetail}
+      />
+
       {isCreator && match.inviteCode && (
-        <section className="mb-4 rounded-xl border border-border bg-surface p-4">
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-text">
-            <Ticket size={16} className="text-primary" />
-            Código de convite
-          </div>
-          <p className="rounded-lg bg-surface-high px-3 py-2 font-mono text-sm text-muted">
-            {match.inviteCode}
-          </p>
-        </section>
+        <InviteShareWidget inviteCode={match.inviteCode} />
       )}
 
       {isPlayersError && (
