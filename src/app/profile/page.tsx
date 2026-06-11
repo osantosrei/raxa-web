@@ -25,12 +25,29 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
+/**
+ * Extracts a human-readable message from an unknown error object, or returns a fallback string.
+ *
+ * @param err - The unknown error value to read a `message` from
+ * @param fallback - The fallback message used when `err` has no readable `message`
+ * @returns The error's `message` string if present, otherwise `fallback`
+ */
 function getApiErrorMessage(err: unknown, fallback: string) {
   return err && typeof err === "object" && "message" in err
     ? String(err.message)
     : fallback;
 }
 
+/**
+ * Renders the profile page allowing the user to view account info and edit their name and phone.
+ *
+ * The component loads profile data, syncs it into the form and auth store, shows a loading spinner while
+ * fetching, displays an error card with retry on fetch failure, and provides a form to update the profile.
+ * Submitting the form updates the remote profile (normalizing an empty phone to `undefined`), updates the
+ * auth store on success, and shows success or API error messages. A sign-out button is also provided.
+ *
+ * @returns The profile page element.
+ */
 export default function ProfilePage() {
   const { user, signOut, updateUser } = useAuth();
   const { data: profile, isLoading, isError, refetch } = useProfile();
