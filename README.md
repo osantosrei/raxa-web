@@ -87,7 +87,11 @@ Configure no painel da Vercel:
 NEXT_PUBLIC_API_URL=https://raxa-api-production.up.railway.app/api/v1
 ```
 
-URL de produção do webapp: pendente até o primeiro deploy.
+URL de produção do webapp:
+
+```text
+https://raxa-web.vercel.app
+```
 
 ## Pendência de CORS no backend
 
