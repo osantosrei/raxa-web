@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
   icon: string;
@@ -26,8 +26,14 @@ export function EmptyState({
       <h2 className="mt-3 text-lg font-bold text-text">{title}</h2>
       <p className="mt-1 text-sm text-muted">{description}</p>
       {action && (
-        <Link href={action.href} className="mt-5">
-          <Button label={action.label} />
+        <Link
+          href={action.href}
+          className={cn(
+            "mt-5 flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition-colors",
+            "hover:bg-primary-dark",
+          )}
+        >
+          {action.label}
         </Link>
       )}
     </div>

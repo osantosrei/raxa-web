@@ -20,6 +20,14 @@ const loginSchema = z.object({
   password: z.string().min(1, "Senha obrigatória"),
 });
 
+function getSafeRedirectPath(redirect: string | null) {
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
+    return "/matches";
+  }
+
+  return redirect;
+}
+
 function LoginContent() {
   const { signIn } = useAuth();
   const router = useRouter();
@@ -40,7 +48,7 @@ function LoginContent() {
     try {
       const response = await authApi.login(data);
       signIn(response);
-      router.replace(searchParams.get("redirect") ?? "/matches");
+      router.replace(getSafeRedirectPath(searchParams.get("redirect")));
     } catch (err) {
       const message =
         err && typeof err === "object" && "message" in err
