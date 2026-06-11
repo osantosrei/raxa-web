@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -11,7 +11,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const isPublic = isPublicPath(pathname);
 
   useEffect(() => {
@@ -19,12 +18,12 @@ export function AuthGate({ children }: { children: ReactNode }) {
       return;
     }
 
-    const query = searchParams.toString();
+    const query = window.location.search.replace(/^\?/, "");
     const redirect = `${pathname}${query ? `?${query}` : ""}`;
 
     router.replace(`/login?redirect=${encodeURIComponent(redirect)}`);
     router.refresh();
-  }, [isLoading, isPublic, pathname, router, searchParams, user]);
+  }, [isLoading, isPublic, pathname, router, user]);
 
   if (!isPublic && (isLoading || !user)) {
     return <LoadingSpinner />;
