@@ -32,6 +32,18 @@ export function buttonClassName({
   );
 }
 
+/**
+ * Render a styled button that supports visual variants, a loading spinner, and optional full-width layout.
+ *
+ * @param label - Text to display inside the button when not loading
+ * @param variant - Visual style to apply; one of `"primary" | "secondary" | "danger" | "ghost"`
+ * @param loading - When `true`, shows a spinner and forces the button into a disabled state
+ * @param disabled - When `true`, disables the button; the button is also disabled when `loading` is `true`
+ * @param fullWidth - When `true`, expands the button to full width (`w-full`)
+ * @param type - Button `type` attribute (defaults to `"button"`)
+ * @param className - Additional CSS class names to append to the computed classes
+ * @returns A JSX element representing the configured button
+ */
 export function Button({
   label,
   variant = "primary",

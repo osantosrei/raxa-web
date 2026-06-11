@@ -20,6 +20,12 @@ const loginSchema = z.object({
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
+/**
+ * Determine a safe internal redirect path from the provided query value.
+ *
+ * @param redirect - The redirect query value to validate; may be `null`. Only values that start with a single `/` (not `//`) are treated as safe.
+ * @returns The original `redirect` when it is a safe internal path, otherwise `"/matches"`.
+ */
 function getSafeRedirectPath(redirect: string | null) {
   if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
     return "/matches";
@@ -28,6 +34,13 @@ function getSafeRedirectPath(redirect: string | null) {
   return redirect;
 }
 
+/**
+ * Renders the login page content: logo, email and password form with Zod validation, submission handling, and a registration link.
+ *
+ * Attempts authentication on submit; on success calls the auth context's signIn and navigates to a safe redirect, on failure displays the API error message.
+ *
+ * @returns The JSX element for the login page containing email and password inputs, an optional API error message, a submit button, and a link to the registration page.
+ */
 function LoginContent() {
   const { signIn } = useAuth();
   const router = useRouter();
@@ -113,6 +126,11 @@ function LoginContent() {
   );
 }
 
+/**
+ * Renders the login page UI wrapped in a React Suspense boundary.
+ *
+ * @returns The login page element.
+ */
 export default function LoginPage() {
   return (
     <Suspense fallback={null}>

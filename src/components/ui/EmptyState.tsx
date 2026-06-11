@@ -12,6 +12,15 @@ interface EmptyStateProps {
   };
 }
 
+/**
+ * Renders a centered empty-state panel showing an icon, title, description, and an optional action link.
+ *
+ * @param icon - Visible icon content (rendered inside a visually prominent span)
+ * @param title - Heading text displayed below the icon
+ * @param description - Supporting descriptive text displayed under the title
+ * @param action - Optional action object with `label` and `href` used to render a call-to-action link
+ * @returns The rendered empty-state JSX element
+ */
 export function EmptyState({
   icon,
   title,

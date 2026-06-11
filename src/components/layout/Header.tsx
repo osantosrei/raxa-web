@@ -7,6 +7,14 @@ import { usePathname } from "next/navigation";
 import { CHROMELESS_PREFIXES } from "@/lib/routes";
 import { useAuth } from "@/store/authContext";
 
+/**
+ * Render a sticky top navigation header that is hidden for chromeless routes.
+ *
+ * When rendered, shows a logo link to /matches and, if an authenticated user
+ * exists, a "Sair" sign-out button that triggers the configured sign-out action.
+ *
+ * @returns The header element when the current pathname does not start with a chromeless prefix, otherwise `null`.
+ */
 export function Header() {
   const { user, signOut } = useAuth();
   const pathname = usePathname();

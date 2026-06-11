@@ -27,6 +27,15 @@ const registerSchema = z.object({
     }),
 });
 
+/**
+ * Renders the user registration page and handles the complete sign-up flow.
+ *
+ * Validates form input, submits registration data to the authentication API,
+ * signs in the user and navigates to "/matches" on success, and displays
+ * validation or API errors when present.
+ *
+ * @returns The registration page React element containing the form and UI.
+ */
 export default function RegisterPage() {
   const { signIn } = useAuth();
   const router = useRouter();

@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   description: "Organize sua pelada",
 };
 
+/**
+ * Root application layout that applies global fonts, HTML language and wraps page content with application providers.
+ *
+ * @param children - The page content to render inside the layout
+ * @returns The root HTML element containing the themed body and provided children
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

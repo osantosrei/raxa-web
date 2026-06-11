@@ -12,6 +12,14 @@ const links = [
   { href: "/profile", icon: User, label: "Perfil" },
 ];
 
+/**
+ * Renders a fixed bottom navigation bar on small screens and highlights the active route.
+ *
+ * The bar is hidden on medium and larger screens and is not rendered when the current
+ * pathname begins with any value in `CHROMELESS_PREFIXES` (e.g., authentication routes).
+ *
+ * @returns A JSX `nav` element containing the navigation links, or `null` if the bar is hidden.
+ */
 export function BottomNav() {
   const pathname = usePathname();
   const isChromeless = CHROMELESS_PREFIXES.some((route) =>
