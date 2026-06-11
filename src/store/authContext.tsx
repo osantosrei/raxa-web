@@ -34,12 +34,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = Cookies.get(TOKEN_KEY);
     const storedUser = window.localStorage.getItem(USER_STORAGE_KEY);
 
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser) as UserResponse);
-      } catch {
-        window.localStorage.removeItem(USER_STORAGE_KEY);
-      }
+    if (!token) {
+      window.localStorage.removeItem(USER_STORAGE_KEY);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!storedUser) {
+      Cookies.remove(TOKEN_KEY);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(storedUser) as UserResponse);
+    } catch {
+      Cookies.remove(TOKEN_KEY);
+      window.localStorage.removeItem(USER_STORAGE_KEY);
     }
 
     setIsLoading(false);
@@ -52,7 +63,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = useCallback(
     (response: AuthResponse) => {
-      Cookies.set(TOKEN_KEY, response.token, { expires: 1, sameSite: "strict" });
+      const expires = new Date(Date.now() + response.expiresIn * 1000);
+
+      Cookies.set(TOKEN_KEY, response.token, {
+        expires,
+        sameSite: "strict",
+      });
       updateUser(response.user);
     },
     [updateUser],

@@ -17,7 +17,7 @@ import type { LoginRequest } from "@/types/api";
 
 const loginSchema = z.object({
   email: z.string().email("E-mail inválido"),
-  password: z.string().min(1, "Senha obrigatória"),
+  password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
 function getSafeRedirectPath(redirect: string | null) {

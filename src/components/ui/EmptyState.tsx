@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
+import { buttonClassName } from "@/components/ui/Button";
 
 interface EmptyStateProps {
   icon: string;
@@ -28,10 +28,7 @@ export function EmptyState({
       {action && (
         <Link
           href={action.href}
-          className={cn(
-            "mt-5 flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition-colors",
-            "hover:bg-primary-dark",
-          )}
+          className={buttonClassName({ className: "mt-5" })}
         >
           {action.label}
         </Link>
