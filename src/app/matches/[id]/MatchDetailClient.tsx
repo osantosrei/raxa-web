@@ -17,6 +17,17 @@ interface MatchDetailClientProps {
   id: string;
 }
 
+/**
+ * Render the match detail page for a given match ID.
+ *
+ * Displays match title, status, location, scheduled date, and confirmed players.
+ * Shows a loading spinner while the match is loading and an error message with retry if the match fails to load.
+ * If the current user is the match creator and an invite code exists, the invite code is shown.
+ * If loading players fails, a players-specific error message with retry is shown while the confirmed players list falls back to an empty array.
+ *
+ * @param id - The match ID used to fetch match details and player list
+ * @returns A JSX element containing the match detail UI
+ */
 export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const { user } = useAuth();
   const {

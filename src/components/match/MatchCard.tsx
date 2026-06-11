@@ -5,6 +5,16 @@ import { StatusBadge } from "@/components/match/StatusBadge";
 import { formatMatchDate } from "@/lib/utils";
 import type { MatchResponse } from "@/types/api";
 
+/**
+ * Render a clickable match summary card for a given match.
+ *
+ * Displays the match title with a status badge, location, formatted scheduled date,
+ * current/max player counts, and remaining open spots when available. The card links
+ * to `/matches/{match.id}`.
+ *
+ * @param match - Match data used to populate the card fields
+ * @returns A JSX element linking to the match details and showing its summary
+ */
 export function MatchCard({ match }: { match: MatchResponse }) {
   const spotsLeft = match.maxPlayers - match.currentPlayers;
 
