@@ -20,14 +20,16 @@ export function MatchCard({ match }: { match: MatchResponse }) {
 
   return (
     <Link href={`/matches/${match.id}`}>
-      <article className="rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]">
+      <article className="h-full rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]">
         <div className="mb-3 flex items-start justify-between gap-2">
-          <h3 className="font-bold leading-tight text-text">{match.title}</h3>
+          <h3 className="min-w-0 break-words font-bold leading-tight text-text">
+            {match.title}
+          </h3>
           <StatusBadge status={match.status} />
         </div>
 
         <div className="flex flex-col gap-1 text-sm text-muted">
-          <span className="flex items-center gap-2">
+          <span className="flex min-w-0 items-center gap-2">
             <MapPin size={16} /> {match.location}
           </span>
           <span className="flex items-center gap-2">

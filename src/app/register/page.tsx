@@ -3,15 +3,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { authApi } from "@/api/auth";
+import { invitesApi } from "@/api/invites";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
+import {
+  getInviteCodeFromRedirect,
+  getSafeRedirectPath,
+} from "@/lib/navigation";
+import { normalizePhone, optionalPhoneSchema } from "@/lib/validation";
 import { useAuth } from "@/store/authContext";
 import type { RegisterRequest } from "@/types/api";
 
@@ -19,26 +25,19 @@ const registerSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
-  phone: z
-    .string()
-    .optional()
-    .refine((value) => !value || value.trim().length > 0, {
-      message: "Telefone inválido",
-    }),
+  phone: optionalPhoneSchema,
 });
 
-/**
- * Renders the user registration page and handles the complete sign-up flow.
- *
- * Validates form input, submits registration data to the authentication API,
- * signs in the user and navigates to "/matches" on success, and displays
- * validation or API errors when present.
- *
- * @returns The registration page React element containing the form and UI.
- */
-export default function RegisterPage() {
+function getApiErrorMessage(err: unknown, fallback: string) {
+  return err && typeof err === "object" && "message" in err
+    ? String(err.message)
+    : fallback;
+}
+
+function RegisterContent() {
   const { signIn } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [apiError, setApiError] = useState<string | null>(null);
 
   const {
@@ -49,22 +48,33 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
+  const redirect = getSafeRedirectPath(searchParams.get("redirect"));
+  const loginHref =
+    redirect === "/matches"
+      ? "/login"
+      : `/login?redirect=${encodeURIComponent(redirect)}`;
+
   const onSubmit = async (data: RegisterRequest) => {
     setApiError(null);
 
     try {
       const response = await authApi.register({
         ...data,
-        phone: data.phone?.trim() || undefined,
+        phone: normalizePhone(data.phone),
       });
       signIn(response);
-      router.replace("/matches");
+
+      const inviteCode = getInviteCodeFromRedirect(redirect);
+
+      if (inviteCode) {
+        const match = await invitesApi.join(inviteCode);
+        router.replace(`/matches/${match.id}`);
+        return;
+      }
+
+      router.replace(redirect);
     } catch (err) {
-      const message =
-        err && typeof err === "object" && "message" in err
-          ? String(err.message)
-          : "Erro ao criar conta.";
-      setApiError(message);
+      setApiError(getApiErrorMessage(err, "Erro ao criar conta."));
     }
   };
 
@@ -75,15 +85,12 @@ export default function RegisterPage() {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={64}
-            height={64}
+            width={96}
+            height={96}
             className="rounded-xl"
             priority
           />
-          <h1 className="mt-2 font-outfit text-4xl font-extrabold text-primary">
-            raxa
-          </h1>
-          <p className="mt-1 text-sm text-muted">Crie sua conta</p>
+          <p className="mt-2 text-sm text-muted">Crie sua conta</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -104,6 +111,7 @@ export default function RegisterPage() {
             label="Telefone"
             type="tel"
             autoComplete="tel"
+            placeholder="(11) 99999-9999"
             error={errors.phone?.message}
             {...register("phone")}
           />
@@ -127,11 +135,22 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-muted">
           Já tem conta?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link
+            href={loginHref}
+            className="font-medium text-primary hover:underline"
+          >
             Entrar
           </Link>
         </p>
       </div>
     </main>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterContent />
+    </Suspense>
   );
 }

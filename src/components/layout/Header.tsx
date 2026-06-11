@@ -5,7 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { CHROMELESS_PREFIXES } from "@/lib/routes";
-import { useAuth } from "@/store/authContext";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { href: "/matches", label: "Peladas" },
+  { href: "/matches/new", label: "Criar" },
+  { href: "/profile", label: "Perfil" },
+];
 
 /**
  * Render a sticky top navigation header that is hidden for chromeless routes.
@@ -16,7 +22,6 @@ import { useAuth } from "@/store/authContext";
  * @returns The header element when the current pathname does not start with a chromeless prefix, otherwise `null`.
  */
 export function Header() {
-  const { user, signOut } = useAuth();
   const pathname = usePathname();
   const isChromeless = CHROMELESS_PREFIXES.some((route) =>
     pathname.startsWith(route),
@@ -28,30 +33,43 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface">
-      <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/matches" className="flex items-center gap-2">
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={32}
-            height={32}
-            className="rounded-lg"
+            width={48}
+            height={48}
+            className="rounded-xl"
             priority
           />
-          <span className="font-outfit text-xl font-extrabold text-primary">
-            raxa
-          </span>
         </Link>
 
-        {user && (
-          <button
-            type="button"
-            onClick={signOut}
-            className="text-sm text-muted transition-colors hover:text-text"
-          >
-            Sair
-          </button>
-        )}
+        <nav className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => {
+            const active =
+              link.href === "/matches"
+                ? pathname === "/matches" ||
+                  (pathname.startsWith("/matches/") &&
+                    !pathname.startsWith("/matches/new"))
+                : pathname === link.href || pathname.startsWith(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                  active
+                    ? "bg-surface-high text-primary"
+                    : "text-muted hover:text-text",
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </header>
   );

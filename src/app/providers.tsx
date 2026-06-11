@@ -2,8 +2,9 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
+import { AuthGate } from "@/components/layout/AuthGate";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Header } from "@/components/layout/Header";
 import { AuthProvider } from "@/store/authContext";
@@ -31,7 +32,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Header />
-        {children}
+        <Suspense fallback={null}>
+          <AuthGate>{children}</AuthGate>
+        </Suspense>
         <BottomNav />
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
