@@ -36,12 +36,28 @@ const matchSchema = z
 type MatchFormInput = z.input<typeof matchSchema>;
 type MatchFormValues = z.output<typeof matchSchema>;
 
+/**
+ * Extracts a message from an error-like object or returns a fallback message.
+ *
+ * @param err - The value to inspect for a `message` property; may be any value.
+ * @param fallback - Message to return when `err` does not contain a `message`.
+ * @returns The `message` string from `err` if present, otherwise `fallback`.
+ */
 function getApiErrorMessage(err: unknown, fallback: string) {
   return err && typeof err === "object" && "message" in err
     ? String(err.message)
     : fallback;
 }
 
+/**
+ * Render the "New Match" page containing a form to create a match.
+ *
+ * The component displays inputs for title, location, date, time and max players,
+ * shows field validation and API errors, and handles form submission to create
+ * a match and navigate to the created match on success.
+ *
+ * @returns The React element for the new-match page and form UI.
+ */
 export default function NewMatchPage() {
   const router = useRouter();
   const createMatch = useCreateMatch();

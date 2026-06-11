@@ -10,6 +10,13 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useMatches } from "@/hooks/useMatches";
 import { useAuth } from "@/store/authContext";
 
+/**
+ * Displays the Matches page with a user greeting, a link to create a new match, and the current matches list.
+ *
+ * Renders a header with the title "Peladas", a greeting that uses the user's first name, and a "Nova" button linking to /matches/new. Shows a loading spinner while match data is loading, an error message with a retry action when loading fails, and an empty-state prompt with an action to create a match when there are no matches. When matches are available, renders a vertical list of MatchCard components keyed by match id.
+ *
+ * @returns The Matches page as a JSX element
+ */
 export default function MatchesPage() {
   const { data: matches, isLoading, isError, refetch } = useMatches();
   const { user } = useAuth();

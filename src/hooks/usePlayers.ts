@@ -4,10 +4,10 @@ import { playersApi } from "@/api/players";
 import { MATCHES_KEY } from "@/hooks/useMatches";
 
 /**
- * Subscribes to and caches the player list for a given match.
+ * Fetches and caches the players for a match using React Query.
  *
- * @param matchId - Match identifier; if falsy the query is disabled
- * @returns The React Query result for the match's player list
+ * @param matchId - Match identifier used to fetch players; the query will not run if this is falsy.
+ * @returns The React Query result object containing `data` (players list), `status`, `error`, and related fields.
  */
 export function usePlayers(matchId: string) {
   return useQuery({
