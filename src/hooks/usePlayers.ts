@@ -18,6 +18,12 @@ export function usePlayers(matchId: string) {
   });
 }
 
+/**
+ * Creates a React Query mutation that joins the specified match and refreshes related match data.
+ *
+ * @param matchId - The identifier of the match to join
+ * @returns A mutation object which, when executed, joins the match and invalidates the match details, the match's player list, and the global matches query on success
+ */
 export function useJoinMatch(matchId: string) {
   const queryClient = useQueryClient();
 
@@ -33,6 +39,12 @@ export function useJoinMatch(matchId: string) {
   });
 }
 
+/**
+ * Creates a mutation hook to leave the specified match and refresh related match data on success.
+ *
+ * @param matchId - The identifier of the match to leave
+ * @returns The React Query mutation object that performs the leave operation; on success it invalidates the match details, the match's player list, and the matches list
+ */
 export function useLeaveMatch(matchId: string) {
   const queryClient = useQueryClient();
 
