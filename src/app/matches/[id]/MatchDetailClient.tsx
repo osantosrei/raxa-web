@@ -1,9 +1,10 @@
 "use client";
 
-import { CalendarDays, ChevronLeft, MapPin, Ticket, Users } from "lucide-react";
+import { CalendarDays, ChevronLeft, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 
 import { InfoRow } from "@/components/match/InfoRow";
+import { InviteShareWidget } from "@/components/match/InviteShareWidget";
 import { MatchActions } from "@/components/match/MatchActions";
 import { PlayerList } from "@/components/match/PlayerList";
 import { StatusBadge } from "@/components/match/StatusBadge";
@@ -18,6 +19,12 @@ interface MatchDetailClientProps {
   id: string;
 }
 
+/**
+ * Renders the match details view for a given match id, including header, info rows, actions, optional invite sharing for the creator, and the confirmed players list.
+ *
+ * @param id - Match identifier used to fetch match details and associated players
+ * @returns The rendered match detail UI
+ */
 export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const { user } = useAuth();
   const {
@@ -92,15 +99,7 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
       />
 
       {isCreator && match.inviteCode && (
-        <section className="mb-4 rounded-xl border border-border bg-surface p-4">
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-text">
-            <Ticket size={16} className="text-primary" />
-            Código de convite
-          </div>
-          <p className="rounded-lg bg-surface-high px-3 py-2 font-mono text-sm text-muted">
-            {match.inviteCode}
-          </p>
-        </section>
+        <InviteShareWidget inviteCode={match.inviteCode} />
       )}
 
       {isPlayersError && (
