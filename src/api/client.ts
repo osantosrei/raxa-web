@@ -1,0 +1,39 @@
+import axios from "axios";
+import Cookies from "js-cookie";
+
+import { TOKEN_KEY } from "@/lib/auth";
+import type { ApiError } from "@/types/api";
+
+export const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1",
+  headers: { "Content-Type": "application/json" },
+  timeout: 10000,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = Cookies.get(TOKEN_KEY);
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const apiError = error.response?.data as ApiError | undefined;
+
+    if (error.response?.status === 401) {
+      Cookies.remove(TOKEN_KEY);
+
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("raxa_user");
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(apiError ?? { message: "Sem conexão com o servidor." });
+  },
+);

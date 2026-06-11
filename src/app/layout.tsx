@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Poppins } from "next/font/google";
+import { Providers } from "@/app/providers";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${outfit.variable} ${poppins.variable}`}>
       <body className="min-h-screen bg-background font-poppins text-text antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
