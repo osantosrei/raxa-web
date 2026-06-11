@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { TOKEN_KEY } from "@/lib/auth";
-
-const PUBLIC_ROUTES = ["/login", "/register", "/invite"];
+import { isPublicPath } from "@/lib/routes";
 
 /**
  * Enforces authentication redirects for incoming requests.
@@ -19,12 +18,12 @@ const PUBLIC_ROUTES = ["/login", "/register", "/invite"];
 export function middleware(request: NextRequest) {
   const token = request.cookies.get(TOKEN_KEY)?.value;
   const pathname = request.nextUrl.pathname;
-  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+  const isPublic = isPublicPath(pathname);
 
   if (!token && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.searchParams.set("redirect", pathname);
+    url.searchParams.set("redirect", `${pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(url);
   }
 

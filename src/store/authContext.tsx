@@ -38,12 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const clearAuthState = useCallback(() => {
+    window.localStorage.removeItem(USER_STORAGE_KEY);
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     const token = Cookies.get(TOKEN_KEY);
     const storedUser = window.localStorage.getItem(USER_STORAGE_KEY);
 
     if (!token) {
-      window.localStorage.removeItem(USER_STORAGE_KEY);
+      clearAuthState();
       setIsLoading(false);
       return;
     }
@@ -62,7 +67,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setIsLoading(false);
-  }, []);
+  }, [clearAuthState]);
+
+  useEffect(() => {
+    // pageshow runs when history restores a bfcache page, so cross-tab sign-out
+    // or a removed TOKEN_KEY cookie clears in-memory auth before private UI is reused.
+    const syncAfterHistoryRestore = () => {
+      if (!Cookies.get(TOKEN_KEY)) {
+        clearAuthState();
+      }
+    };
+
+    window.addEventListener("pageshow", syncAfterHistoryRestore);
+
+    return () => {
+      window.removeEventListener("pageshow", syncAfterHistoryRestore);
+    };
+  }, [clearAuthState]);
 
   const updateUser = useCallback((nextUser: UserResponse) => {
     window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
@@ -84,10 +105,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(() => {
     Cookies.remove(TOKEN_KEY);
-    window.localStorage.removeItem(USER_STORAGE_KEY);
-    setUser(null);
-    router.push("/login");
-  }, [router]);
+    clearAuthState();
+    router.replace("/login");
+    router.refresh();
+  }, [clearAuthState, router]);
 
   const value = useMemo(
     () => ({ user, isLoading, signIn, signOut, updateUser }),

@@ -12,6 +12,8 @@ import { authApi } from "@/api/auth";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
+import { getApiErrorMessage } from "@/lib/errors";
+import { getSafeRedirectPath } from "@/lib/navigation";
 import { useAuth } from "@/store/authContext";
 import type { LoginRequest } from "@/types/api";
 
@@ -19,20 +21,6 @@ const loginSchema = z.object({
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
-
-/**
- * Determine a safe internal redirect path from the provided query value.
- *
- * @param redirect - The redirect query value to validate; may be `null`. Only values that start with a single `/` (not `//`) are treated as safe.
- * @returns The original `redirect` when it is a safe internal path, otherwise `"/matches"`.
- */
-function getSafeRedirectPath(redirect: string | null) {
-  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) {
-    return "/matches";
-  }
-
-  return redirect;
-}
 
 /**
  * Renders the login page content: logo, email and password form with Zod validation, submission handling, and a registration link.
@@ -54,6 +42,11 @@ function LoginContent() {
   } = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
   });
+  const redirect = getSafeRedirectPath(searchParams.get("redirect"));
+  const registerHref =
+    redirect === "/matches"
+      ? "/register"
+      : `/register?redirect=${encodeURIComponent(redirect)}`;
 
   const onSubmit = async (data: LoginRequest) => {
     setApiError(null);
@@ -61,13 +54,9 @@ function LoginContent() {
     try {
       const response = await authApi.login(data);
       signIn(response);
-      router.replace(getSafeRedirectPath(searchParams.get("redirect")));
+      router.replace(redirect);
     } catch (err) {
-      const message =
-        err && typeof err === "object" && "message" in err
-          ? String(err.message)
-          : "Erro ao fazer login.";
-      setApiError(message);
+      setApiError(getApiErrorMessage(err, "Erro ao fazer login."));
     }
   };
 
@@ -78,14 +67,11 @@ function LoginContent() {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={64}
-            height={64}
+            width={96}
+            height={96}
             className="rounded-xl"
             priority
           />
-          <h1 className="mt-2 font-outfit text-4xl font-extrabold text-primary">
-            raxa
-          </h1>
           <p className="mt-1 text-sm text-muted">Organize sua pelada</p>
         </div>
 
@@ -117,7 +103,10 @@ function LoginContent() {
 
         <p className="mt-6 text-center text-sm text-muted">
           Não tem conta?{" "}
-          <Link href="/register" className="font-medium text-primary hover:underline">
+          <Link
+            href={registerHref}
+            className="font-medium text-primary hover:underline"
+          >
             Cadastre-se
           </Link>
         </p>

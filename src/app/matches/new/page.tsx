@@ -93,7 +93,7 @@ export default function NewMatchPage() {
   };
 
   return (
-    <main className="mx-auto max-w-lg px-4 pb-24">
+    <main className="mx-auto w-full max-w-2xl px-4 pb-24 sm:px-6 lg:px-8">
       <Link
         href="/matches"
         className="flex items-center gap-1 py-4 text-sm text-muted"
@@ -102,7 +102,9 @@ export default function NewMatchPage() {
       </Link>
 
       <div className="mb-5">
-        <h1 className="text-2xl font-extrabold text-text">Nova pelada</h1>
+        <h1 className="text-2xl font-extrabold text-text sm:text-3xl">
+          Nova pelada
+        </h1>
         <p className="mt-1 text-sm text-muted">
           Preencha os dados para convidar a galera.
         </p>
@@ -121,7 +123,7 @@ export default function NewMatchPage() {
           error={errors.location?.message}
           {...register("location")}
         />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Input
             label="Data"
             type="date"

@@ -6,48 +6,27 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClassName } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import { normalizePhone, optionalPhoneSchema } from "@/lib/validation";
 import { useAuth } from "@/store/authContext";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
-  phone: z
-    .string()
-    .optional()
-    .refine((value) => !value || value.trim().length > 0, {
-      message: "Telefone inválido",
-    }),
+  phone: optionalPhoneSchema,
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-/**
- * Extracts a human-readable message from an unknown error object, or returns a fallback string.
- *
- * @param err - The unknown error value to read a `message` from
- * @param fallback - The fallback message used when `err` has no readable `message`
- * @returns The error's `message` string if present, otherwise `fallback`
- */
 function getApiErrorMessage(err: unknown, fallback: string) {
   return err && typeof err === "object" && "message" in err
     ? String(err.message)
     : fallback;
 }
 
-/**
- * Renders the profile page allowing the user to view account info and edit their name and phone.
- *
- * The component loads profile data, syncs it into the form and auth store, shows a loading spinner while
- * fetching, displays an error card with retry on fetch failure, and provides a form to update the profile.
- * Submitting the form updates the remote profile (normalizing an empty phone to `undefined`), updates the
- * auth store on success, and shows success or API error messages. A sign-out button is also provided.
- *
- * @returns The profile page element.
- */
 export default function ProfilePage() {
   const { user, signOut, updateUser } = useAuth();
   const { data: profile, isLoading, isError, refetch } = useProfile();
@@ -59,7 +38,7 @@ export default function ProfilePage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -85,10 +64,14 @@ export default function ProfilePage() {
     try {
       const updatedUser = await updateProfile.mutateAsync({
         name: data.name,
-        phone: data.phone?.trim() || undefined,
+        phone: normalizePhone(data.phone),
       });
 
       updateUser(updatedUser);
+      reset({
+        name: updatedUser.name,
+        phone: updatedUser.phone ?? "",
+      });
       setSuccessMessage("Perfil atualizado.");
     } catch (err) {
       setApiError(getApiErrorMessage(err, "Erro ao atualizar perfil."));
@@ -100,30 +83,23 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto max-w-lg px-4 pb-24">
-      <div className="flex items-center justify-between py-4">
-        <div>
-          <h1 className="text-xl font-bold text-text">Perfil</h1>
-          <p className="text-sm text-muted">Dados da sua conta</p>
-        </div>
-        <button
-          type="button"
-          onClick={signOut}
-          className="flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-text"
-        >
-          <LogOut size={16} />
-          Sair
-        </button>
+    <main className="mx-auto w-full max-w-3xl px-4 pb-24 sm:px-6 lg:px-8">
+      <div className="py-5">
+        <h1 className="text-2xl font-bold text-text sm:text-3xl">Perfil</h1>
       </div>
 
-      <section className="mb-5 rounded-xl border border-border bg-surface p-4">
+      <section className="mb-5 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-high text-primary">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-high text-primary">
             <UserRound size={24} />
           </div>
-          <div>
-            <p className="font-bold text-text">{profile?.name ?? user?.name}</p>
-            <p className="text-sm text-muted">{profile?.email ?? user?.email}</p>
+          <div className="min-w-0">
+            <p className="truncate font-bold text-text">
+              {profile?.name ?? user?.name}
+            </p>
+            <p className="truncate text-sm text-muted">
+              {profile?.email ?? user?.email}
+            </p>
           </div>
         </div>
       </section>
@@ -147,6 +123,7 @@ export default function ProfilePage() {
           label="Telefone"
           type="tel"
           autoComplete="tel"
+          placeholder="(11) 99999-9999"
           error={errors.phone?.message}
           {...register("phone")}
         />
@@ -162,9 +139,25 @@ export default function ProfilePage() {
           label="Salvar alterações"
           type="submit"
           loading={isSubmitting || updateProfile.isPending}
+          disabled={!isDirty}
           fullWidth
         />
       </form>
+
+      <div className="mt-8 border-t border-border pt-5">
+        <button
+          type="button"
+          onClick={signOut}
+          className={buttonClassName({
+            variant: "secondary",
+            fullWidth: true,
+            className: "gap-2",
+          })}
+        >
+          <LogOut size={16} />
+          Sair
+        </button>
+      </div>
     </main>
   );
 }
