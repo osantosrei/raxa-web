@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { CHROMELESS_PREFIXES } from "@/lib/routes";
 import { useAuth } from "@/store/authContext";
 
 const CHROMELESS_PREFIXES = ["/login", "/register", "/invite"];

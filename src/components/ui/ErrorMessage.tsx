@@ -6,6 +6,7 @@ interface ErrorMessageProps {
   message: string;
   className?: string;
   onRetry?: () => void;
+  retryLabel?: string;
 }
 
 /**
@@ -20,6 +21,7 @@ export function ErrorMessage({
   message,
   className,
   onRetry,
+  retryLabel = "Tentar novamente",
 }: ErrorMessageProps) {
   return (
     <div
@@ -34,9 +36,9 @@ export function ErrorMessage({
         <button
           type="button"
           onClick={onRetry}
-          className="font-bold text-danger hover:text-red-300"
+          className="font-bold text-danger hover:text-danger/80"
         >
-          Tentar novamente
+          {retryLabel}
         </button>
       )}
     </div>

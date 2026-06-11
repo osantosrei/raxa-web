@@ -4,6 +4,8 @@ import { Home, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { CHROMELESS_PREFIXES } from "@/lib/routes";
+
 const links = [
   { href: "/matches", icon: Home, label: "Início" },
   { href: "/matches/new", icon: PlusCircle, label: "Criar" },

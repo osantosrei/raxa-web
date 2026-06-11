@@ -18,8 +18,13 @@ import type { RegisterRequest } from "@/types/api";
 const registerSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
-  password: z.string().min(6, "Mínimo 6 caracteres"),
-  phone: z.string().optional(),
+  password: z.string().min(8, "Mínimo 8 caracteres"),
+  phone: z
+    .string()
+    .optional()
+    .refine((value) => !value || value.trim().length > 0, {
+      message: "Telefone inválido",
+    }),
 });
 
 /**
@@ -50,7 +55,7 @@ export default function RegisterPage() {
     try {
       const response = await authApi.register({
         ...data,
-        phone: data.phone || undefined,
+        phone: data.phone?.trim() || undefined,
       });
       signIn(response);
       router.replace("/matches");

@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/Spinner";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
@@ -13,7 +14,7 @@ const variants = {
   primary: "bg-primary text-white hover:bg-primary-dark",
   secondary:
     "border border-border bg-surface-high text-text hover:bg-border",
-  danger: "bg-danger text-white hover:bg-red-700",
+  danger: "bg-danger text-white hover:bg-danger/90",
   ghost: "bg-transparent text-primary hover:text-primary-dark",
 };
 
@@ -29,6 +30,20 @@ const variants = {
  * @param className - Additional CSS class names to append to the computed classes
  * @returns A JSX element representing the configured button
  */
+export function buttonClassName({
+  variant = "primary",
+  fullWidth,
+  className,
+}: Pick<ButtonProps, "variant" | "fullWidth" | "className"> = {}) {
+  return cn(
+    "flex items-center justify-center rounded-xl px-6 py-3 text-sm font-bold transition-all",
+    "disabled:cursor-not-allowed disabled:opacity-50",
+    variants[variant],
+    fullWidth && "w-full",
+    className,
+  );
+}
+
 export function Button({
   label,
   variant = "primary",
@@ -42,18 +57,16 @@ export function Button({
   return (
     <button
       type={type}
+      aria-busy={loading || undefined}
       disabled={disabled || loading}
-      className={cn(
-        "flex items-center justify-center rounded-xl px-6 py-3 text-sm font-bold transition-all",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        variants[variant],
-        fullWidth && "w-full",
-        className,
-      )}
+      className={buttonClassName({ variant, fullWidth, className })}
       {...props}
     >
       {loading ? (
-        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        <>
+          <Spinner borderClass="border-current" />
+          <span className="sr-only">Carregando</span>
+        </>
       ) : (
         label
       )}
