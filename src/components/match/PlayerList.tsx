@@ -1,6 +1,12 @@
 import { getInitials } from "@/lib/utils";
 import type { PlayerResponse } from "@/types/api";
 
+/**
+ * Renders a vertical list of confirmed players or an empty-state message when none are provided.
+ *
+ * @param players - Array of player objects; each must have `userId` (used as React key) and `name` (used for display and initials).
+ * @returns A JSX element containing player rows (initials, name, and the "Confirmado" label) or a bordered empty-state card when `players` is empty.
+ */
 export function PlayerList({ players }: { players: PlayerResponse[] }) {
   if (players.length === 0) {
     return (

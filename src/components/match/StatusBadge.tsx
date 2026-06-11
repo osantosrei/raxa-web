@@ -7,6 +7,12 @@ const statusConfig: Record<MatchStatus, { label: string; classes: string }> = {
   FINISHED: { label: "Encerrada", classes: "bg-muted/10 text-muted" },
 };
 
+/**
+ * Renders a compact badge displaying a Portuguese label for the given match status.
+ *
+ * @param status - MatchStatus value that determines the badge label and styling
+ * @returns The span element used as a styled status badge
+ */
 export function StatusBadge({ status }: { status: MatchStatus }) {
   const { label, classes } = statusConfig[status];
 
