@@ -6,6 +6,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
+/**
+ * Renders a widget that displays an invite link and lets the user copy or share it.
+ *
+ * Builds the invite URL from the current page origin and the provided `inviteCode`, shows the generated link (or a loading placeholder while the origin is determined), provides a copy button that temporarily indicates success, and provides a "share" action that uses the Web Share API when available with a clipboard fallback. Displays a user-facing error message when copy or share fails.
+ *
+ * @param inviteCode - The invite code appended to "/invite/" to form the invite URL
+ * @returns The React element for the invite sharing widget
+ */
 export function InviteShareWidget({ inviteCode }: { inviteCode: string }) {
   const [origin, setOrigin] = useState("");
   const [copied, setCopied] = useState(false);

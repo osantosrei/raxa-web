@@ -19,6 +19,12 @@ interface MatchDetailClientProps {
   id: string;
 }
 
+/**
+ * Renders the match details view for a given match id, including header, info rows, actions, optional invite sharing for the creator, and the confirmed players list.
+ *
+ * @param id - Match identifier used to fetch match details and associated players
+ * @returns The rendered match detail UI
+ */
 export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const { user } = useAuth();
   const {

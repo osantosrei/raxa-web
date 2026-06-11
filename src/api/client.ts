@@ -10,6 +10,12 @@ const PUBLIC_REQUEST_PATTERNS = [
   /^\/invites\/[^/]+\/resolve$/,
 ];
 
+/**
+ * Determine whether a request URL corresponds to a public (no-auth) endpoint.
+ *
+ * @param url - The request URL or path; the query string (after `?`) is ignored.
+ * @returns `true` if the path portion of `url` matches any configured public request pattern, `false` otherwise.
+ */
 function isPublicRequest(url?: string) {
   const pathname = url?.split("?")[0];
 

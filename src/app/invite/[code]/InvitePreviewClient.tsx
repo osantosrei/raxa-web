@@ -19,12 +19,27 @@ interface InvitePreviewClientProps {
   code: string;
 }
 
+/**
+ * Extracts a human-readable message from an error-like value or returns the provided fallback.
+ *
+ * @param err - The value that may contain a `message` property.
+ * @param fallback - The string to return when `err` does not contain a message.
+ * @returns The `message` property converted to a string if present, otherwise `fallback`.
+ */
 function getApiErrorMessage(err: unknown, fallback: string) {
   return err && typeof err === "object" && "message" in err
     ? String(err.message)
     : fallback;
 }
 
+/**
+ * Render an invite preview UI for the provided invite code and handle the join flow.
+ *
+ * Shows loading, invalid-invite, or preview states; prompts unauthenticated users to log in (preserving redirect back to the invite); attempts to join the match when the user confirms presence, navigates to the match page on success, and displays a user-facing error message on failure.
+ *
+ * @param code - The invite code used to fetch and display the match preview
+ * @returns The rendered invite preview component
+ */
 export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
   const { user } = useAuth();
   const router = useRouter();
