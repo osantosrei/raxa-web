@@ -4,6 +4,7 @@ import { CalendarDays, ChevronLeft, MapPin, Ticket, Users } from "lucide-react";
 import Link from "next/link";
 
 import { InfoRow } from "@/components/match/InfoRow";
+import { MatchActions } from "@/components/match/MatchActions";
 import { PlayerList } from "@/components/match/PlayerList";
 import { StatusBadge } from "@/components/match/StatusBadge";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -47,6 +48,13 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
   }
 
   const isCreator = match.creator.id === user?.id;
+  const isParticipant =
+    players?.some((player) => player.userId === user?.id) ?? false;
+
+  const refetchDetail = () => {
+    refetchMatch();
+    refetchPlayers();
+  };
 
   return (
     <main className="mx-auto max-w-lg px-4 pb-24">
@@ -75,6 +83,13 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
           text={`${match.currentPlayers} de ${match.maxPlayers} confirmados`}
         />
       </section>
+
+      <MatchActions
+        match={match}
+        isCreator={isCreator}
+        isParticipant={isParticipant}
+        onActionComplete={refetchDetail}
+      />
 
       {isCreator && match.inviteCode && (
         <section className="mb-4 rounded-xl border border-border bg-surface p-4">
