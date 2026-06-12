@@ -8,24 +8,18 @@ export interface DrawResult {
   reserves: string[];
 }
 
-type RandomFn = () => number;
-
-function shuffle<T>(array: T[], random: RandomFn): T[] {
+function shuffle<T>(array: T[]): T[] {
   const result = [...array];
 
   for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1));
+    const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
 
   return result;
 }
 
-export function drawTeams(
-  playerNames: string[],
-  teamSize: number,
-  random: RandomFn = Math.random,
-): DrawResult {
+export function drawTeams(playerNames: string[], teamSize: number): DrawResult {
   if (teamSize < 2) {
     throw new Error("O time precisa ter pelo menos 2 jogadores.");
   }
@@ -34,7 +28,7 @@ export function drawTeams(
     throw new Error("Jogadores insuficientes para formar um time.");
   }
 
-  const shuffled = shuffle(playerNames, random);
+  const shuffled = shuffle(playerNames);
   const teamCount = Math.floor(shuffled.length / teamSize);
   const totalInTeams = teamCount * teamSize;
   const teams: DrawnTeam[] = Array.from({ length: teamCount }, (_, index) => ({

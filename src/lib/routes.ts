@@ -2,7 +2,6 @@ export const PUBLIC_PREFIXES = [
   "/login",
   "/register",
   "/invite",
-  "/team-draw-preview",
 ];
 export const CHROMELESS_PREFIXES = ["/login", "/register", "/invite"];
 
