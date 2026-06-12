@@ -21,9 +21,11 @@ export function AuthShell({ children }: AuthShellProps) {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={256}
-            height={144}
+            width={576}
+            height={324}
             className="h-auto w-64 object-contain sm:w-72"
+            sizes="(min-width: 640px) 288px, 256px"
+            quality={100}
             priority
           />
           <p className="mt-3 text-base font-medium text-muted">

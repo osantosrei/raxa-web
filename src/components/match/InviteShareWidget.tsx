@@ -73,15 +73,15 @@ export function InviteShareWidget({ inviteCode }: { inviteCode: string }) {
     <section className="mt-4 rounded-xl border border-border bg-surface p-4">
       <p className="mb-2 text-sm font-semibold text-text">Link de convite</p>
 
-      <div className="mb-3 flex items-center gap-2 rounded-lg bg-surface-high px-3 py-2">
-        <span className="flex-1 truncate text-xs text-muted">
+      <div className="mb-3 flex flex-col gap-2 rounded-lg bg-surface-high px-3 py-2 sm:flex-row sm:items-center">
+        <span className="min-w-0 break-all text-xs text-muted sm:flex-1 sm:truncate">
           {inviteUrl || "Gerando link..."}
         </span>
         <button
           type="button"
           onClick={handleCopy}
           disabled={!inviteUrl}
-          className="flex shrink-0 items-center gap-1 text-xs font-semibold text-primary transition-colors hover:text-primary-dark disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-1 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary transition-colors hover:text-primary-dark disabled:opacity-50 sm:w-auto sm:shrink-0 sm:border-0 sm:px-0 sm:py-0"
         >
           <Copy size={14} />
           {copied ? "Copiado" : "Copiar"}
