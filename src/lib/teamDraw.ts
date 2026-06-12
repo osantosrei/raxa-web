@@ -20,6 +20,10 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export function drawTeams(playerNames: string[], teamSize: number): DrawResult {
+  if (!Number.isFinite(teamSize) || !Number.isInteger(teamSize)) {
+    throw new Error("teamSize must be a finite integer.");
+  }
+
   if (teamSize < 2) {
     throw new Error("O time precisa ter pelo menos 2 jogadores.");
   }

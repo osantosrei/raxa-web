@@ -48,6 +48,18 @@ describe("drawTeams", () => {
     );
   });
 
+  it("lança erro se teamSize não é um inteiro finito", () => {
+    expect(() => drawTeams(players10, Number.NaN)).toThrow(
+      "teamSize must be a finite integer.",
+    );
+    expect(() => drawTeams(players10, Number.POSITIVE_INFINITY)).toThrow(
+      "teamSize must be a finite integer.",
+    );
+    expect(() => drawTeams(players10, 2.5)).toThrow(
+      "teamSize must be a finite integer.",
+    );
+  });
+
   it("lança erro se jogadores insuficientes", () => {
     expect(() => drawTeams(["A", "B"], 5)).toThrow(
       "Jogadores insuficientes para formar um time.",
