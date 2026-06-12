@@ -85,15 +85,17 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
   const isFull = preview.status === "FULL";
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
-      <div className="w-full max-w-sm">
+    <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-6 sm:py-8">
+      <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={160}
-            height={90}
-            className="mx-auto mb-3 h-auto w-40 object-contain"
+            width={384}
+            height={216}
+            className="mx-auto mb-3 h-auto w-44 object-contain sm:w-48"
+            sizes="(min-width: 640px) 192px, 176px"
+            quality={100}
             priority
           />
           <p className="text-sm text-muted">Você foi convidado para</p>

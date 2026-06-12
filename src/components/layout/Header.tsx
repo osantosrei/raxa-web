@@ -38,9 +38,11 @@ export function Header() {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={112}
-            height={63}
+            width={288}
+            height={162}
             className="h-auto w-28 object-contain sm:w-36"
+            sizes="(min-width: 640px) 144px, 112px"
+            quality={100}
             priority
           />
         </Link>
