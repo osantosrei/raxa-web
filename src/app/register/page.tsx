@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -10,6 +9,7 @@ import { z } from "zod";
 
 import { authApi } from "@/api/auth";
 import { invitesApi } from "@/api/invites";
+import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
@@ -83,76 +83,59 @@ function RegisterContent() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center">
-          <Image
-            src="/logo.png"
-            alt="Raxa"
-            width={128}
-            height={128}
-            className="h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
-            priority
-          />
-          <p className="mt-2 text-sm text-muted">Crie sua conta</p>
-        </div>
+    <AuthShell>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Nome"
+          autoComplete="name"
+          error={errors.name?.message}
+          {...register("name")}
+        />
+        <Input
+          label="E-mail"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          {...register("email")}
+        />
+        <Input
+          label="Telefone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="(11) 99999-9999"
+          error={errors.phone?.message}
+          {...register("phone")}
+        />
+        <Input
+          label="Senha"
+          type="password"
+          autoComplete="new-password"
+          error={errors.password?.message}
+          {...register("password")}
+        />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <Input
-            label="Nome"
-            autoComplete="name"
-            error={errors.name?.message}
-            {...register("name")}
-          />
-          <Input
-            label="E-mail"
-            type="email"
-            autoComplete="email"
-            error={errors.email?.message}
-            {...register("email")}
-          />
-          <Input
-            label="Telefone"
-            type="tel"
-            autoComplete="tel"
-            placeholder="(11) 99999-9999"
-            error={errors.phone?.message}
-            {...register("phone")}
-          />
-          <Input
-            label="Senha"
-            type="password"
-            autoComplete="new-password"
-            error={errors.password?.message}
-            {...register("password")}
-          />
+        {apiError && <ErrorMessage message={apiError} />}
+        {inviteWarning && (
+          <div className="rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-warning">
+            {inviteWarning}
+          </div>
+        )}
 
-          {apiError && <ErrorMessage message={apiError} />}
-          {inviteWarning && (
-            <div className="rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-warning">
-              {inviteWarning}
-            </div>
-          )}
+        <Button
+          label="Cadastrar"
+          type="submit"
+          loading={isSubmitting}
+          fullWidth
+        />
+      </form>
 
-          <Button
-            label="Cadastrar"
-            type="submit"
-            loading={isSubmitting}
-            fullWidth
-          />
-        </form>
-
-        <p className="mt-6 text-center text-sm text-muted">
-          Já tem conta?{" "}
-          <Link
-            href={loginHref}
-            className="font-medium text-primary hover:underline"
-          >
-            Entrar
-          </Link>
-        </p>
-      </div>
-    </main>
+      <p className="mt-6 text-center text-sm text-muted">
+        Já tem conta?{" "}
+        <Link href={loginHref} className="font-medium text-primary hover:underline">
+          Entrar
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
 

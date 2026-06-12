@@ -91,9 +91,9 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={96}
-            height={96}
-            className="mx-auto mb-3 h-20 w-20 rounded-2xl object-cover"
+            width={160}
+            height={90}
+            className="mx-auto mb-3 h-auto w-40 object-contain"
             priority
           />
           <p className="text-sm text-muted">Você foi convidado para</p>

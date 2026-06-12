@@ -99,7 +99,7 @@ Acesse `http://localhost:3000`.
 | API | Render | `raxa-api-production.onrender.com` |
 | Banco de dados | Supabase | PostgreSQL gerenciado |
 
-Cada `git push` para `main` dispara um novo deploy automático na Vercel.
+Cada `git push` para `master` dispara um novo deploy automático na Vercel.
 
 ---
 
@@ -146,7 +146,7 @@ O token é armazenado em cookie via `js-cookie` e lido pelo middleware do Next.j
 `src/middleware.ts` intercepta toda navegação, verifica o cookie `raxa_token` e redireciona para `/login` quando necessário — sem lógica de auth espalhada pelas páginas.
 
 **Tipos espelham os DTOs do backend.**
-`src/types/api.ts` define as interfaces que refletem exatamente o contrato da `raxa-api`. Mudanças no backend quebram o TypeScript antes de quebrar o app em runtime.
+`src/types/api.ts` define interfaces alinhadas ao contrato da `raxa-api`. Elas ajudam a detectar divergências durante o desenvolvimento e o build, reduzindo o risco de integração, mas não garantem segurança em runtime sem validações adicionais, testes ou checagens dos dados recebidos.
 
 **Web Share API com fallback.**
 O botão de compartilhar convite usa `navigator.share` no mobile (abre o sheet nativo do sistema operacional) e cai em cópia para clipboard no desktop, sem dependências externas.
