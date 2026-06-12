@@ -1,5 +1,6 @@
 "use client";
 
+import { Trophy } from "lucide-react";
 import Link from "next/link";
 
 import { MatchCard } from "@/components/match/MatchCard";
@@ -32,7 +33,7 @@ export default function MatchesPage() {
 
       {matches && matches.length === 0 && (
         <EmptyState
-          icon="⚽"
+          icon={<Trophy size={30} strokeWidth={2.2} />}
           title="Nenhuma pelada ainda"
           description="Crie uma partida ou entre via link de convite."
           action={{ label: "Criar partida", href: "/matches/new" }}

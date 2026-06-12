@@ -1,9 +1,10 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { buttonClassName } from "@/components/ui/Button";
 
 interface EmptyStateProps {
-  icon: string;
+  icon: ReactNode;
   title: string;
   description: string;
   action?: {
@@ -29,7 +30,10 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <span className="text-3xl" aria-hidden>
+      <span
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary"
+        aria-hidden
+      >
         {icon}
       </span>
       <h2 className="mt-3 text-lg font-bold text-text">{title}</h2>

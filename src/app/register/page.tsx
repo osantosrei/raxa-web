@@ -89,9 +89,9 @@ function RegisterContent() {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={96}
-            height={96}
-            className="rounded-xl"
+            width={128}
+            height={128}
+            className="h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
             priority
           />
           <p className="mt-2 text-sm text-muted">Crie sua conta</p>

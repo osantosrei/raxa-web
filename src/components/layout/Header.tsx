@@ -33,14 +33,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/matches" className="flex items-center gap-2">
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={48}
-            height={48}
-            className="rounded-xl"
+            width={64}
+            height={64}
+            className="h-14 w-14 rounded-xl object-cover sm:h-16 sm:w-16"
             priority
           />
         </Link>
