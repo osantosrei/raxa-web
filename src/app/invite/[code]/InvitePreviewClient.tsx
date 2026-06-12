@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, MapPin, Users } from "lucide-react";
+import { CalendarDays, Link2Off, MapPin, Users } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -72,7 +72,7 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
       <main className="flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <EmptyState
-            icon="🔗"
+            icon={<Link2Off size={30} strokeWidth={2.2} />}
             title="Convite inválido"
             description="Este convite não existe ou foi desativado."
           />
@@ -91,9 +91,9 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
           <Image
             src="/logo.png"
             alt="Raxa"
-            width={48}
-            height={48}
-            className="mx-auto mb-2 rounded-xl"
+            width={160}
+            height={90}
+            className="mx-auto mb-3 h-auto w-40 object-contain"
             priority
           />
           <p className="text-sm text-muted">Você foi convidado para</p>
