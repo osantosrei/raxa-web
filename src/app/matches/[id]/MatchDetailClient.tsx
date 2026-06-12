@@ -8,6 +8,7 @@ import { InviteShareWidget } from "@/components/match/InviteShareWidget";
 import { MatchActions } from "@/components/match/MatchActions";
 import { PlayerList } from "@/components/match/PlayerList";
 import { StatusBadge } from "@/components/match/StatusBadge";
+import { TeamDrawButton } from "@/components/match/TeamDrawButton";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useMatchDetail } from "@/hooks/useMatches";
@@ -96,6 +97,12 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
 
           {isCreator && match.inviteCode && (
             <InviteShareWidget inviteCode={match.inviteCode} />
+          )}
+
+          {isCreator && players && players.length >= 2 && (
+            <div className="mt-4">
+              <TeamDrawButton match={match} players={players} />
+            </div>
           )}
         </div>
 
