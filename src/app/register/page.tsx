@@ -8,12 +8,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { authApi } from "@/api/auth";
+import {
+  ApiWakeError,
+  API_WAKING_MESSAGE,
+  REGISTER_CONFIRMATION_UNKNOWN_MESSAGE,
+  wakeApi,
+} from "@/api/health";
 import { invitesApi } from "@/api/invites";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
-import { getApiErrorMessage } from "@/lib/errors";
+import { getApiErrorMessage, isApiConnectionError } from "@/lib/errors";
 import {
   getInviteCodeFromRedirect,
   getSafeRedirectPath,
@@ -35,6 +41,7 @@ function RegisterContent() {
   const searchParams = useSearchParams();
   const [apiError, setApiError] = useState<string | null>(null);
   const [inviteWarning, setInviteWarning] = useState<string | null>(null);
+  const [isWakingApi, setIsWakingApi] = useState(false);
 
   const {
     register,
@@ -53,8 +60,16 @@ function RegisterContent() {
   const onSubmit = async (data: RegisterRequest) => {
     setApiError(null);
     setInviteWarning(null);
+    let registerSubmitted = false;
 
     try {
+      setIsWakingApi(true);
+      setApiError(API_WAKING_MESSAGE);
+      await wakeApi();
+      setIsWakingApi(false);
+      setApiError(null);
+
+      registerSubmitted = true;
       const response = await authApi.register({
         ...data,
         phone: normalizePhone(data.phone),
@@ -78,7 +93,15 @@ function RegisterContent() {
 
       router.replace(redirect);
     } catch (err) {
-      setApiError(getApiErrorMessage(err, "Erro ao criar conta."));
+      if (err instanceof ApiWakeError) {
+        setApiError(err.message);
+      } else if (registerSubmitted && isApiConnectionError(err)) {
+        setApiError(REGISTER_CONFIRMATION_UNKNOWN_MESSAGE);
+      } else {
+        setApiError(getApiErrorMessage(err, "Erro ao criar conta."));
+      }
+    } finally {
+      setIsWakingApi(false);
     }
   };
 
@@ -125,6 +148,7 @@ function RegisterContent() {
           label="Cadastrar"
           type="submit"
           loading={isSubmitting}
+          loadingLabel={isWakingApi ? "Servidor iniciando..." : undefined}
           fullWidth
         />
       </form>
