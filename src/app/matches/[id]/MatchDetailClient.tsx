@@ -13,6 +13,7 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useMatchDetail } from "@/hooks/useMatches";
 import { usePlayers } from "@/hooks/usePlayers";
+import { getEffectiveMatchStatus } from "@/lib/matches";
 import { formatMatchDate } from "@/lib/utils";
 import { useAuth } from "@/store/authContext";
 
@@ -52,6 +53,8 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const isCreator = match.creator.id === user?.id;
   const isParticipant =
     players?.some((player) => player.userId === user?.id) ?? false;
+  const effectiveStatus = getEffectiveMatchStatus(match);
+  const isEnded = effectiveStatus === "FINISHED";
 
   const refetchDetail = () => {
     refetchMatch();
@@ -73,7 +76,7 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
             <h1 className="text-2xl font-extrabold leading-tight text-text sm:text-3xl">
               {match.title}
             </h1>
-            <StatusBadge status={match.status} />
+            <StatusBadge status={effectiveStatus} />
           </div>
 
           <section className="mb-4 flex flex-col gap-2 rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -95,7 +98,7 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
             onActionComplete={refetchDetail}
           />
 
-          {isCreator && match.inviteCode && (
+          {isCreator && match.inviteCode && !isEnded && (
             <InviteShareWidget inviteCode={match.inviteCode} />
           )}
 

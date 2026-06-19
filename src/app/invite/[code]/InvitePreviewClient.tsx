@@ -12,6 +12,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useInvitePreview, useJoinViaInvite } from "@/hooks/useInvite";
+import { getEffectiveMatchStatus } from "@/lib/matches";
 import { formatMatchDate } from "@/lib/utils";
 import { useAuth } from "@/store/authContext";
 
@@ -82,7 +83,11 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
   }
 
   const spotsLeft = preview.maxPlayers - preview.currentPlayers;
-  const isFull = preview.status === "FULL";
+  const effectiveStatus = getEffectiveMatchStatus(preview);
+  const isFull = effectiveStatus === "FULL";
+  const isEnded = effectiveStatus === "FINISHED";
+  const isCancelled = effectiveStatus === "CANCELLED";
+  const canJoin = effectiveStatus === "OPEN";
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-6 sm:py-8">
@@ -103,7 +108,7 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
             {preview.title}
           </h1>
           <div className="mt-2">
-            <StatusBadge status={preview.status} />
+            <StatusBadge status={effectiveStatus} />
           </div>
         </div>
 
@@ -117,7 +122,7 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
             icon={<Users size={16} />}
             text={`${preview.currentPlayers}/${preview.maxPlayers} confirmados`}
           />
-          {!isFull && (
+          {canJoin && (
             <p className="mt-1 text-sm font-medium text-success">
               {spotsLeft} vaga{spotsLeft > 1 ? "s" : ""}{" "}
               {spotsLeft > 1 ? "disponíveis" : "disponível"}
@@ -128,14 +133,28 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
         {error && <ErrorMessage className="mb-4" message={error} />}
 
         <Button
-          label={isFull ? "Partida cheia" : "Confirmar presença"}
-          disabled={isFull}
+          label={
+            isCancelled
+              ? "Partida cancelada"
+              : isEnded
+                ? "Partida encerrada"
+                : isFull
+                  ? "Partida cheia"
+                : "Confirmar presença"
+          }
+          disabled={!canJoin}
           loading={joinViaInvite.isPending}
           onClick={handleJoin}
           fullWidth
         />
 
-        {!user && !isFull && (
+        {isEnded && (
+          <p className="mt-3 text-center text-xs text-muted">
+            Esta partida já foi realizada e não aceita novas confirmações.
+          </p>
+        )}
+
+        {!user && canJoin && (
           <p className="mt-3 text-center text-xs text-muted">
             Você precisará fazer login ou criar uma conta para confirmar.
           </p>
