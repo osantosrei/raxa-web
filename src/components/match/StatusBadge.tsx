@@ -13,11 +13,21 @@ const statusConfig: Record<MatchStatus, { label: string; classes: string }> = {
  * @param status - MatchStatus value that determines the badge label and styling
  * @returns The span element used as a styled status badge
  */
-export function StatusBadge({ status }: { status: MatchStatus }) {
+export function StatusBadge({
+  status,
+  prominent = false,
+}: {
+  status: MatchStatus;
+  prominent?: boolean;
+}) {
   const { label, classes } = statusConfig[status];
 
   return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${classes}`}>
+    <span
+      className={`rounded-full font-bold ${classes} ${
+        prominent ? "px-3 py-1 text-sm" : "px-2.5 py-1 text-xs"
+      }`}
+    >
       {label}
     </span>
   );

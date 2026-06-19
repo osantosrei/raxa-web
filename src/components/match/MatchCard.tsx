@@ -2,7 +2,8 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 
 import { StatusBadge } from "@/components/match/StatusBadge";
-import { getEffectiveMatchStatus } from "@/lib/matches";
+import { cn } from "@/lib/utils";
+import { getEffectiveMatchStatus, getMatchDateToneLabel } from "@/lib/matches";
 import { formatMatchDate } from "@/lib/utils";
 import type { MatchResponse } from "@/types/api";
 
@@ -16,18 +17,43 @@ import type { MatchResponse } from "@/types/api";
  * @param match - Match data used to populate the card fields
  * @returns A JSX element linking to the match details and showing its summary
  */
-export function MatchCard({ match }: { match: MatchResponse }) {
+export function MatchCard({
+  match,
+  featured = false,
+}: {
+  match: MatchResponse;
+  featured?: boolean;
+}) {
   const spotsLeft = match.maxPlayers - match.currentPlayers;
   const effectiveStatus = getEffectiveMatchStatus(match);
+  const dateToneLabel = getMatchDateToneLabel(match.scheduledAt);
 
   return (
     <Link href={`/matches/${match.id}`} className="block h-full">
-      <article className="h-full rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]">
+      <article
+        className={cn(
+          "h-full rounded-xl border bg-surface p-4 transition-colors hover:bg-surface-high active:scale-[0.99]",
+          featured
+            ? "border-primary/70 bg-surface-high shadow-[0_0_0_1px_rgba(255,107,0,0.18)]"
+            : "border-border",
+        )}
+      >
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+            {dateToneLabel}
+          </span>
+          <StatusBadge status={effectiveStatus} prominent />
+        </div>
+
         <div className="mb-3 flex items-start justify-between gap-2">
-          <h3 className="min-w-0 break-words font-bold leading-tight text-text">
+          <h3
+            className={cn(
+              "min-w-0 break-words font-bold leading-tight text-text",
+              featured ? "text-xl" : "text-base",
+            )}
+          >
             {match.title}
           </h3>
-          <StatusBadge status={effectiveStatus} />
         </div>
 
         <div className="flex flex-col gap-1 text-sm text-muted">

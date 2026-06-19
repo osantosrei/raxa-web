@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/matches", label: "Peladas" },
-  { href: "/matches/new", label: "Criar" },
   { href: "/profile", label: "Perfil" },
 ];
 
@@ -51,9 +50,7 @@ export function Header() {
           {navLinks.map((link) => {
             const active =
               link.href === "/matches"
-                ? pathname === "/matches" ||
-                  (pathname.startsWith("/matches/") &&
-                    !pathname.startsWith("/matches/new"))
+                ? pathname === "/matches" || pathname.startsWith("/matches/")
                 : pathname === link.href ||
                   pathname.startsWith(`${link.href}/`);
 
