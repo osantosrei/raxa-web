@@ -86,6 +86,7 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
   const effectiveStatus = getEffectiveMatchStatus(preview);
   const isFull = effectiveStatus === "FULL";
   const isEnded = effectiveStatus === "FINISHED";
+  const isCancelled = effectiveStatus === "CANCELLED";
   const canJoin = effectiveStatus === "OPEN";
 
   return (
@@ -133,10 +134,12 @@ export function InvitePreviewClient({ code }: InvitePreviewClientProps) {
 
         <Button
           label={
-            isEnded
-              ? "Partida encerrada"
-              : isFull
-                ? "Partida cheia"
+            isCancelled
+              ? "Partida cancelada"
+              : isEnded
+                ? "Partida encerrada"
+                : isFull
+                  ? "Partida cheia"
                 : "Confirmar presença"
           }
           disabled={!canJoin}
