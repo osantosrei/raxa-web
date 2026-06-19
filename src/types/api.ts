@@ -2,7 +2,6 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  phone?: string;
 }
 
 export interface LoginRequest {
@@ -21,12 +20,10 @@ export interface UserResponse {
   id: string;
   name: string;
   email: string;
-  phone: string | null;
 }
 
 export interface UpdateProfileRequest {
   name?: string;
-  phone?: string;
 }
 
 export type MatchStatus = "OPEN" | "FULL" | "CANCELLED" | "FINISHED";

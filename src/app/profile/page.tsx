@@ -11,12 +11,10 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
-import { normalizePhone, optionalPhoneSchema } from "@/lib/validation";
 import { useAuth } from "@/store/authContext";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
-  phone: optionalPhoneSchema,
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -43,7 +41,6 @@ export default function ProfilePage() {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: user?.name ?? "",
-      phone: user?.phone ?? "",
     },
   });
 
@@ -51,7 +48,6 @@ export default function ProfilePage() {
     if (profile) {
       reset({
         name: profile.name,
-        phone: profile.phone ?? "",
       });
       updateUser(profile);
     }
@@ -64,13 +60,11 @@ export default function ProfilePage() {
     try {
       const updatedUser = await updateProfile.mutateAsync({
         name: data.name,
-        phone: normalizePhone(data.phone),
       });
 
       updateUser(updatedUser);
       reset({
         name: updatedUser.name,
-        phone: updatedUser.phone ?? "",
       });
       setSuccessMessage("Perfil atualizado.");
     } catch (err) {
@@ -119,15 +113,6 @@ export default function ProfilePage() {
           error={errors.name?.message}
           {...register("name")}
         />
-        <Input
-          label="Telefone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="(11) 99999-9999"
-          error={errors.phone?.message}
-          {...register("phone")}
-        />
-
         {apiError && <ErrorMessage message={apiError} />}
         {successMessage && (
           <div className="rounded-xl border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">

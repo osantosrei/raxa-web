@@ -24,7 +24,6 @@ import {
   getInviteCodeFromRedirect,
   getSafeRedirectPath,
 } from "@/lib/navigation";
-import { normalizePhone, optionalPhoneSchema } from "@/lib/validation";
 import { useAuth } from "@/store/authContext";
 import type { RegisterRequest } from "@/types/api";
 
@@ -32,7 +31,6 @@ const registerSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
-  phone: optionalPhoneSchema,
 });
 
 function RegisterContent() {
@@ -70,10 +68,7 @@ function RegisterContent() {
       setApiError(null);
 
       registerSubmitted = true;
-      const response = await authApi.register({
-        ...data,
-        phone: normalizePhone(data.phone),
-      });
+      const response = await authApi.register(data);
       signIn(response);
 
       const inviteCode = getInviteCodeFromRedirect(redirect);
@@ -120,14 +115,6 @@ function RegisterContent() {
           autoComplete="email"
           error={errors.email?.message}
           {...register("email")}
-        />
-        <Input
-          label="Telefone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="(11) 99999-9999"
-          error={errors.phone?.message}
-          {...register("phone")}
         />
         <Input
           label="Senha"
