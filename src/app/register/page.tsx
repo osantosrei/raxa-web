@@ -36,7 +36,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 function getDefaultNameFromEmail(email: string) {
   const localPart = email.split("@")[0]?.replace(/[._-]+/g, " ").trim();
 
-  return localPart && localPart.length >= 2 ? localPart : email;
+  return localPart && localPart.length >= 2 ? localPart : "User";
 }
 
 function RegisterContent() {
@@ -74,7 +74,10 @@ function RegisterContent() {
       setApiError(null);
 
       registerSubmitted = true;
-      const response = await authApi.register(data);
+      const response = await authApi.register({
+        ...data,
+        name: getDefaultNameFromEmail(data.email),
+      });
       signIn(response);
 
       const inviteCode = getInviteCodeFromRedirect(redirect);

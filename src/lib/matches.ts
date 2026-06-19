@@ -35,7 +35,10 @@ export function canAcceptParticipants(match: MatchStatusSource) {
 export type MatchFilter = "ALL" | "MINE" | "OPEN" | "ENDED";
 
 function getMatchTime(match: Pick<MatchResponse, "scheduledAt">) {
-  return new Date(match.scheduledAt).getTime();
+  const scheduledAt = new Date(match.scheduledAt);
+  const time = scheduledAt.getTime();
+
+  return Number.isNaN(time) ? Number.POSITIVE_INFINITY : time;
 }
 
 function isActiveMatch(match: MatchResponse) {
@@ -93,6 +96,9 @@ export function getNextMatch(matches: MatchResponse[]) {
 export function getMatchesStats(matches: MatchResponse[]) {
   const activeMatches = getActiveMatches(matches);
   const nextMatch = activeMatches[0] ?? null;
+  const nextMatchDate = nextMatch ? new Date(nextMatch.scheduledAt) : null;
+  const hasValidNextMatchDate =
+    nextMatchDate !== null && !Number.isNaN(nextMatchDate.getTime());
 
   return {
     activeCount: activeMatches.length,
@@ -100,8 +106,8 @@ export function getMatchesStats(matches: MatchResponse[]) {
       (total, match) => total + match.currentPlayers,
       0,
     ),
-    nextLabel: nextMatch
-      ? format(new Date(nextMatch.scheduledAt), "dd MMM", { locale: ptBR })
+    nextLabel: hasValidNextMatchDate
+      ? format(nextMatchDate, "dd MMM", { locale: ptBR })
       : "Sem agenda",
   };
 }
