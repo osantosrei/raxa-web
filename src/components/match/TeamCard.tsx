@@ -1,3 +1,5 @@
+import { PlayerJerseyIcon } from "@/components/match/PlayerJerseyIcon";
+import { cn } from "@/lib/utils";
 import type { DrawnTeam } from "@/lib/teamDraw";
 
 interface TeamCardProps {
@@ -5,33 +7,48 @@ interface TeamCardProps {
   index: number;
 }
 
-const TEAM_ACCENTS = [
-  "border-l-primary",
-  "border-l-success",
-  "border-l-warning",
-  "border-l-danger",
-  "border-l-blue-500",
-  "border-l-purple-500",
-];
+const TEAM_STYLES = [
+  {
+    border: "border-blue-500/80",
+    dot: "bg-blue-500",
+    player: "text-blue-50",
+    title: "text-blue-100",
+    tone: "blue",
+  },
+  {
+    border: "border-red-500/80",
+    dot: "bg-red-500",
+    player: "text-red-50",
+    title: "text-red-100",
+    tone: "red",
+  },
+  {
+    border: "border-primary/70",
+    dot: "bg-primary",
+    player: "text-text",
+    title: "text-text",
+    tone: "neutral",
+  },
+] as const;
 
 export function TeamCard({ team, index }: TeamCardProps) {
-  const accent = TEAM_ACCENTS[index % TEAM_ACCENTS.length];
+  const style = TEAM_STYLES[index] ?? TEAM_STYLES[2];
 
   return (
-    <section className={`rounded-xl border border-border border-l-4 ${accent} bg-surface p-4`}>
+    <section className={cn("rounded-xl border bg-surface p-4", style.border)}>
       <div className="mb-3 flex items-center gap-2">
-        <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden />
-        <h3 className="font-bold text-text">{team.name}</h3>
-        <span className="ml-auto text-xs font-normal text-muted">
+        <span className={cn("h-2.5 w-2.5 rounded-full", style.dot)} aria-hidden />
+        <h3 className={cn("font-bold", style.title)}>{team.name}</h3>
+        <span className="ml-auto shrink-0 text-xs font-normal text-muted">
           {team.players.length} jogadores
         </span>
       </div>
 
       <ul className="flex flex-col gap-1.5">
-        {team.players.map((player) => (
-          <li key={player} className="flex items-center gap-2 text-sm text-text">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted" />
-            {player}
+        {team.players.map((player, playerIndex) => (
+          <li key={player} className="flex min-w-0 items-center gap-2 text-sm">
+            <PlayerJerseyIcon number={playerIndex + 1} tone={style.tone} />
+            <span className={cn("min-w-0 truncate", style.player)}>{player}</span>
           </li>
         ))}
       </ul>

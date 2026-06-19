@@ -76,11 +76,11 @@ export function TeamDrawModal({ match, players, onClose }: TeamDrawModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 sm:p-4"
       onClick={(event) => event.target === event.currentTarget && onClose()}
     >
-      <section className="flex max-h-[90dvh] w-full max-w-md flex-col rounded-2xl border border-border bg-background">
-        <header className="flex shrink-0 items-center justify-between border-b border-border p-5">
+      <section className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl sm:max-h-[90dvh]">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border p-4 sm:p-5">
           <div>
             <h2 className="text-lg font-extrabold text-text">Sortear times</h2>
             <p className="mt-0.5 text-xs text-muted">
@@ -98,7 +98,7 @@ export function TeamDrawModal({ match, players, onClose }: TeamDrawModalProps) {
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5">
           <div className="mb-5">
             <label
               htmlFor="team-size"
@@ -106,7 +106,7 @@ export function TeamDrawModal({ match, players, onClose }: TeamDrawModalProps) {
             >
               Jogadores por time
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <input
                 id="team-size"
                 type="number"
@@ -117,7 +117,7 @@ export function TeamDrawModal({ match, players, onClose }: TeamDrawModalProps) {
                   setTeamSizeInput(event.target.value);
                   setError(null);
                 }}
-                className="w-20 rounded-xl border border-border bg-surface-high px-3 py-2.5 text-center text-sm font-bold text-text outline-none transition-colors focus:border-primary"
+                className="w-full rounded-xl border border-border bg-surface-high px-3 py-2.5 text-center text-sm font-bold text-text outline-none transition-colors focus:border-primary sm:w-24"
               />
               <p className="text-xs leading-snug text-muted">{preview}</p>
             </div>
@@ -130,16 +130,20 @@ export function TeamDrawModal({ match, players, onClose }: TeamDrawModalProps) {
           )}
 
           {result && (
-            <div className="flex flex-col gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {result.teams.map((team, index) => (
                 <TeamCard key={team.name} team={team} index={index} />
               ))}
-              <ReservesCard players={result.reserves} />
+              {result.reserves.length > 0 && (
+                <div className="sm:col-span-2">
+                  <ReservesCard players={result.reserves} />
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        <footer className="flex shrink-0 flex-col gap-2 border-t border-border p-5">
+        <footer className="flex shrink-0 flex-col gap-2 border-t border-border p-4 sm:p-5">
           <button
             type="button"
             onClick={handleDraw}
