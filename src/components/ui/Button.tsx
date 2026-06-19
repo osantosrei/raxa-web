@@ -7,6 +7,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   variant?: "primary" | "secondary" | "danger" | "ghost";
   loading?: boolean;
+  loadingLabel?: string;
   fullWidth?: boolean;
 }
 
@@ -38,6 +39,7 @@ export function buttonClassName({
  * @param label - Text to display inside the button when not loading
  * @param variant - Visual style to apply; one of `"primary" | "secondary" | "danger" | "ghost"`
  * @param loading - When `true`, shows a spinner and forces the button into a disabled state
+ * @param loadingLabel - Optional visible label to show next to the spinner while loading
  * @param disabled - When `true`, disables the button; the button is also disabled when `loading` is `true`
  * @param fullWidth - When `true`, expands the button to full width (`w-full`)
  * @param type - Button `type` attribute (defaults to `"button"`)
@@ -48,6 +50,7 @@ export function Button({
   label,
   variant = "primary",
   loading,
+  loadingLabel,
   disabled,
   fullWidth,
   type = "button",
@@ -65,7 +68,11 @@ export function Button({
       {loading ? (
         <>
           <Spinner borderClass="border-current" />
-          <span className="sr-only">Carregando</span>
+          {loadingLabel ? (
+            <span className="ml-2">{loadingLabel}</span>
+          ) : (
+            <span className="sr-only">Carregando</span>
+          )}
         </>
       ) : (
         label

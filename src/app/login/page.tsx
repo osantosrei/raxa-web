@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { authApi } from "@/api/auth";
+import { ApiWakeError, API_WAKING_MESSAGE, wakeApi } from "@/api/health";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -27,6 +28,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [apiError, setApiError] = useState<string | null>(null);
+  const [isWakingApi, setIsWakingApi] = useState(false);
 
   const {
     register,
@@ -45,11 +47,23 @@ function LoginContent() {
     setApiError(null);
 
     try {
+      setIsWakingApi(true);
+      setApiError(API_WAKING_MESSAGE);
+      await wakeApi();
+      setIsWakingApi(false);
+      setApiError(null);
+
       const response = await authApi.login(data);
       signIn(response);
       router.replace(redirect);
     } catch (err) {
-      setApiError(getApiErrorMessage(err, "Erro ao fazer login."));
+      setApiError(
+        err instanceof ApiWakeError
+          ? err.message
+          : getApiErrorMessage(err, "Erro ao fazer login."),
+      );
+    } finally {
+      setIsWakingApi(false);
     }
   };
 
@@ -77,6 +91,7 @@ function LoginContent() {
           label="Entrar"
           type="submit"
           loading={isSubmitting}
+          loadingLabel={isWakingApi ? "Servidor iniciando..." : undefined}
           fullWidth
         />
       </form>

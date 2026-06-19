@@ -1,10 +1,12 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+import { API_WAKING_MESSAGE } from "@/api/health";
 import { TOKEN_KEY } from "@/lib/auth";
 import type { ApiError } from "@/types/api";
 
 const PUBLIC_REQUEST_PATTERNS = [
+  /^\/health$/,
   /^\/auth\/login$/,
   /^\/auth\/register$/,
   /^\/invites\/[^/]+\/resolve$/,
@@ -57,6 +59,11 @@ apiClient.interceptors.response.use(
       }
     }
 
-    return Promise.reject(apiError ?? { message: "Sem conexão com o servidor." });
+    return Promise.reject(
+      apiError ?? {
+        message: API_WAKING_MESSAGE,
+        isConnectionError: true,
+      },
+    );
   },
 );
