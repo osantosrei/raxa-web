@@ -17,7 +17,7 @@ export function StatusBadge({ status }: { status: MatchStatus }) {
   const { label, classes } = statusConfig[status];
 
   return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${classes}`}>
+    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes}`}>
       {label}
     </span>
   );

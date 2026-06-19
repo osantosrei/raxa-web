@@ -25,13 +25,19 @@ import {
   getSafeRedirectPath,
 } from "@/lib/navigation";
 import { useAuth } from "@/store/authContext";
-import type { RegisterRequest } from "@/types/api";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+function getDefaultNameFromEmail(email: string) {
+  const localPart = email.split("@")[0]?.replace(/[._-]+/g, " ").trim();
+
+  return localPart && localPart.length >= 2 ? localPart : "User";
+}
 
 function RegisterContent() {
   const { signIn } = useAuth();
@@ -45,7 +51,7 @@ function RegisterContent() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterRequest>({
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -55,7 +61,7 @@ function RegisterContent() {
       ? "/login"
       : `/login?redirect=${encodeURIComponent(redirect)}`;
 
-  const onSubmit = async (data: RegisterRequest) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     setApiError(null);
     setInviteWarning(null);
     let registerSubmitted = false;
@@ -68,7 +74,10 @@ function RegisterContent() {
       setApiError(null);
 
       registerSubmitted = true;
-      const response = await authApi.register(data);
+      const response = await authApi.register({
+        ...data,
+        name: getDefaultNameFromEmail(data.email),
+      });
       signIn(response);
 
       const inviteCode = getInviteCodeFromRedirect(redirect);
@@ -103,12 +112,6 @@ function RegisterContent() {
   return (
     <AuthShell>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <Input
-          label="Nome"
-          autoComplete="name"
-          error={errors.name?.message}
-          {...register("name")}
-        />
         <Input
           label="E-mail"
           type="email"
