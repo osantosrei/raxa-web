@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useCancelMatch } from "@/hooks/useMatches";
 import { useJoinMatch, useLeaveMatch } from "@/hooks/usePlayers";
+import { getEffectiveMatchStatus } from "@/lib/matches";
 import type { MatchResponse } from "@/types/api";
 
 interface MatchActionsProps {
@@ -58,9 +59,10 @@ export function MatchActions({
     }
   };
 
-  const isPast = new Date(match.scheduledAt) < new Date();
-  const isCancelled = match.status === "CANCELLED";
-  const isFull = match.status === "FULL";
+  const effectiveStatus = getEffectiveMatchStatus(match);
+  const isCancelled = effectiveStatus === "CANCELLED";
+  const isEnded = effectiveStatus === "FINISHED";
+  const isFull = effectiveStatus === "FULL";
 
   if (isCancelled) {
     return (
@@ -70,7 +72,7 @@ export function MatchActions({
     );
   }
 
-  if (isPast) {
+  if (isEnded) {
     return (
       <div className="rounded-xl border border-border bg-surface p-4 text-sm text-muted">
         Esta partida já foi realizada.

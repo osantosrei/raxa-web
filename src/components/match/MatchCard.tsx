@@ -2,6 +2,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 
 import { StatusBadge } from "@/components/match/StatusBadge";
+import { getEffectiveMatchStatus } from "@/lib/matches";
 import { formatMatchDate } from "@/lib/utils";
 import type { MatchResponse } from "@/types/api";
 
@@ -17,6 +18,7 @@ import type { MatchResponse } from "@/types/api";
  */
 export function MatchCard({ match }: { match: MatchResponse }) {
   const spotsLeft = match.maxPlayers - match.currentPlayers;
+  const effectiveStatus = getEffectiveMatchStatus(match);
 
   return (
     <Link href={`/matches/${match.id}`} className="block h-full">
@@ -25,7 +27,7 @@ export function MatchCard({ match }: { match: MatchResponse }) {
           <h3 className="min-w-0 break-words font-bold leading-tight text-text">
             {match.title}
           </h3>
-          <StatusBadge status={match.status} />
+          <StatusBadge status={effectiveStatus} />
         </div>
 
         <div className="flex flex-col gap-1 text-sm text-muted">
@@ -42,7 +44,7 @@ export function MatchCard({ match }: { match: MatchResponse }) {
             <Users size={16} />
             {match.currentPlayers}/{match.maxPlayers} jogadores
           </span>
-          {spotsLeft > 0 && match.status === "OPEN" && (
+          {spotsLeft > 0 && effectiveStatus === "OPEN" && (
             <span className="text-xs font-medium text-success">
               {spotsLeft} vaga{spotsLeft > 1 ? "s" : ""}
             </span>
