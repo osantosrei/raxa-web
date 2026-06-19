@@ -74,10 +74,7 @@ function RegisterContent() {
       setApiError(null);
 
       registerSubmitted = true;
-      const response = await authApi.register({
-        ...data,
-        name: getDefaultNameFromEmail(data.email),
-      });
+      const response = await authApi.register(data);
       signIn(response);
 
       const inviteCode = getInviteCodeFromRedirect(redirect);

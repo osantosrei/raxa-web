@@ -30,7 +30,7 @@ Este repositório é o webapp que consome a [raxa-api](https://github.com/osanto
 - Entrada e saída com feedback em tempo real
 - Convites compartilháveis via link (`/invite/{code}`)
 - Preview público da partida sem exigir login
-- Perfil do usuário com edição de nome e telefone
+- Perfil do usuário com edição de nome
 
 ---
 
