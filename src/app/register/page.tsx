@@ -24,16 +24,20 @@ import {
   getInviteCodeFromRedirect,
   getSafeRedirectPath,
 } from "@/lib/navigation";
-import { normalizePhone, optionalPhoneSchema } from "@/lib/validation";
 import { useAuth } from "@/store/authContext";
-import type { RegisterRequest } from "@/types/api";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
-  phone: optionalPhoneSchema,
 });
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+function getDefaultNameFromEmail(email: string) {
+  const localPart = email.split("@")[0]?.replace(/[._-]+/g, " ").trim();
+
+  return localPart && localPart.length >= 2 ? localPart : email;
+}
 
 function RegisterContent() {
   const { signIn } = useAuth();
@@ -47,7 +51,7 @@ function RegisterContent() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterRequest>({
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -57,7 +61,7 @@ function RegisterContent() {
       ? "/login"
       : `/login?redirect=${encodeURIComponent(redirect)}`;
 
-  const onSubmit = async (data: RegisterRequest) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     setApiError(null);
     setInviteWarning(null);
     let registerSubmitted = false;
@@ -72,7 +76,7 @@ function RegisterContent() {
       registerSubmitted = true;
       const response = await authApi.register({
         ...data,
-        phone: normalizePhone(data.phone),
+        name: getDefaultNameFromEmail(data.email),
       });
       signIn(response);
 
@@ -109,25 +113,11 @@ function RegisterContent() {
     <AuthShell>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <Input
-          label="Nome"
-          autoComplete="name"
-          error={errors.name?.message}
-          {...register("name")}
-        />
-        <Input
           label="E-mail"
           type="email"
           autoComplete="email"
           error={errors.email?.message}
           {...register("email")}
-        />
-        <Input
-          label="Telefone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="(11) 99999-9999"
-          error={errors.phone?.message}
-          {...register("phone")}
         />
         <Input
           label="Senha"

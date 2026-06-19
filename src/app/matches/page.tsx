@@ -106,9 +106,9 @@ export default function MatchesPage() {
       {matches && matches.length === 0 && (
         <EmptyState
           icon={<Trophy size={30} strokeWidth={2.2} />}
-          title="Nenhuma pelada ainda"
-          description="Crie uma partida ou entre via link de convite."
-          action={{ label: "Criar partida", href: "/matches/new" }}
+          title="Nenhuma pelada encontrada"
+          description="Crie uma nova pelada para começar."
+          action={{ label: "Nova Pelada", href: "/matches/new" }}
         />
       )}
 
@@ -127,14 +127,16 @@ export default function MatchesPage() {
               <p className="text-2xl font-extrabold text-text">
                 {stats.participationCount}
               </p>
-              <p className="text-sm font-medium text-muted">Participações</p>
+              <p className="text-sm font-medium text-muted">
+                Minhas Participações
+              </p>
             </div>
             <div className="rounded-xl border border-border bg-surface p-4">
               <CalendarDays size={20} className="mb-3 text-primary" />
               <p className="text-2xl font-extrabold text-text">
                 {stats.nextLabel}
               </p>
-              <p className="text-sm font-medium text-muted">Próxima</p>
+              <p className="text-sm font-medium text-muted">Próxima Partida</p>
             </div>
           </section>
 
@@ -161,7 +163,12 @@ export default function MatchesPage() {
           </div>
 
           {filteredMatches.length === 0 ? (
-            <EmptySection message="Nenhuma pelada encontrada para este filtro." />
+            <EmptyState
+              icon={<Trophy size={30} strokeWidth={2.2} />}
+              title="Nenhuma pelada encontrada"
+              description="Crie uma nova pelada para começar."
+              action={{ label: "Nova Pelada", href: "/matches/new" }}
+            />
           ) : (
             <>
               {nextMatch && (
@@ -176,21 +183,19 @@ export default function MatchesPage() {
                 </section>
               )}
 
-              <section>
-                <SectionHeading
-                  title="Peladas Ativas"
-                  count={activeMatches.length}
-                />
-                {activeMatches.length > 0 ? (
+              {activeMatches.length > 0 && (
+                <section>
+                  <SectionHeading
+                    title="Peladas Ativas"
+                    count={activeMatches.length}
+                  />
                   <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                     {activeMatches.map((match) => (
                       <MatchCard key={match.id} match={match} />
                     ))}
                   </div>
-                ) : (
-                  <EmptySection message="Nenhuma pelada ativa neste filtro." />
-                )}
-              </section>
+                </section>
+              )}
 
               <section>
                 <SectionHeading title="Histórico" count={historyMatches.length} />

@@ -38,22 +38,21 @@ export function MatchCard({
             : "border-border",
         )}
       >
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
-            {dateToneLabel}
-          </span>
-          <StatusBadge status={effectiveStatus} prominent />
-        </div>
-
-        <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="mb-3">
           <h3
             className={cn(
               "min-w-0 break-words font-bold leading-tight text-text",
-              featured ? "text-xl" : "text-base",
+              featured ? "text-2xl" : "text-base",
             )}
           >
             {match.title}
           </h3>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-surface-high px-2.5 py-1 text-xs font-semibold text-muted">
+              {dateToneLabel}
+            </span>
+            <StatusBadge status={effectiveStatus} />
+          </div>
         </div>
 
         <div className="flex flex-col gap-1 text-sm text-muted">
@@ -70,7 +69,12 @@ export function MatchCard({
             <Users size={16} />
             {match.currentPlayers}/{match.maxPlayers} jogadores
           </span>
-          {spotsLeft > 0 && effectiveStatus === "OPEN" && (
+          {spotsLeft > 0 && effectiveStatus === "OPEN" && featured && (
+            <span className="rounded-full bg-success/10 px-3 py-1 text-sm font-extrabold text-success">
+              {spotsLeft} vaga{spotsLeft > 1 ? "s" : ""}
+            </span>
+          )}
+          {spotsLeft > 0 && effectiveStatus === "OPEN" && !featured && (
             <span className="text-xs font-medium text-success">
               {spotsLeft} vaga{spotsLeft > 1 ? "s" : ""}
             </span>

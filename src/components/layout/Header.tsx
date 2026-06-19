@@ -39,8 +39,8 @@ export function Header() {
             alt="Raxa"
             width={288}
             height={162}
-            className="h-auto w-28 object-contain sm:w-36"
-            sizes="(min-width: 640px) 144px, 112px"
+            className="h-auto w-32 object-contain sm:w-44"
+            sizes="(min-width: 640px) 176px, 128px"
             quality={100}
             priority
           />
