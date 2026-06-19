@@ -40,7 +40,11 @@ export async function wakeApi() {
         timeout: REQUEST_TIMEOUT_MS,
       });
       return;
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return;
+      }
+
       const delay = Math.min(getBackoffDelay(attempt), deadline - Date.now());
 
       if (delay <= 0) {
