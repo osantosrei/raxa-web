@@ -54,7 +54,8 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
   const isParticipant =
     players?.some((player) => player.userId === user?.id) ?? false;
   const effectiveStatus = getEffectiveMatchStatus(match);
-  const isEnded = effectiveStatus === "FINISHED";
+  const isInactive =
+    effectiveStatus === "FINISHED" || effectiveStatus === "CANCELLED";
 
   const refetchDetail = () => {
     refetchMatch();
@@ -98,11 +99,11 @@ export function MatchDetailClient({ id }: MatchDetailClientProps) {
             onActionComplete={refetchDetail}
           />
 
-          {isCreator && match.inviteCode && !isEnded && (
+          {isCreator && match.inviteCode && !isInactive && (
             <InviteShareWidget inviteCode={match.inviteCode} />
           )}
 
-          {isCreator && players && players.length >= 2 && (
+          {isCreator && players && players.length >= 2 && !isInactive && (
             <div className="mt-4">
               <TeamDrawButton match={match} players={players} />
             </div>
