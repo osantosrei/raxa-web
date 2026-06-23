@@ -27,17 +27,12 @@ import {
 import { useAuth } from "@/store/authContext";
 
 const registerSchema = z.object({
+  name: z.string().min(2, "Mínimo 2 caracteres"),
   email: z.string().email("E-mail inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
-
-function getDefaultNameFromEmail(email: string) {
-  const localPart = email.split("@")[0]?.replace(/[._-]+/g, " ").trim();
-
-  return localPart && localPart.length >= 2 ? localPart : "User";
-}
 
 function RegisterContent() {
   const { signIn } = useAuth();
@@ -74,10 +69,7 @@ function RegisterContent() {
       setApiError(null);
 
       registerSubmitted = true;
-      const response = await authApi.register({
-        ...data,
-        name: getDefaultNameFromEmail(data.email),
-      });
+      const response = await authApi.register(data);
       signIn(response);
 
       const inviteCode = getInviteCodeFromRedirect(redirect);
@@ -112,6 +104,19 @@ function RegisterContent() {
   return (
     <AuthShell>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <div className="rounded-xl border border-primary/20 bg-primary/10 px-4 py-3">
+          <h2 className="text-base font-extrabold text-text">Criar conta</h2>
+          <p className="mt-1 text-sm text-muted">
+            Informe seu nome para aparecer nas peladas.
+          </p>
+        </div>
+
+        <Input
+          label="Nome"
+          autoComplete="name"
+          error={errors.name?.message}
+          {...register("name")}
+        />
         <Input
           label="E-mail"
           type="email"
